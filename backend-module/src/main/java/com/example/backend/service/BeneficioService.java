@@ -5,9 +5,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
-import com.example.backend.dto.BeneficioDto;
+import com.example.backend.dto.BeneficioDTO;
 import com.example.backend.dto.TransferenciaRequest;
 import com.example.backend.exception.BackendException;
+import com.example.backend.mapper.interfaces.IBeneficioMapper;
 import com.example.backend.repository.BeneficioRepository;
 import com.example.backend.service.interfaces.IBeneficioService;
 import com.example.backend.specification.BeneficioSpec;
@@ -30,6 +31,11 @@ import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validator;
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ *
+ * Serviço para operações relacionadas a Benefício
+ * @author lepf9
+ */
 @Service
 @Transactional
 @Slf4j
@@ -37,21 +43,23 @@ public class BeneficioService implements IBeneficioService {
 
     private final BeneficioRepository beneficioRepository;
     private final BeneficioEjbService beneficioEjbService;
+    private final IBeneficioMapper beneficioMapper;
     private final Validator validator;
 
-    public BeneficioService(BeneficioRepository beneficioRepository, BeneficioEjbService beneficioEjbService, Validator validator) {
+    public BeneficioService(BeneficioRepository beneficioRepository, BeneficioEjbService beneficioEjbService, IBeneficioMapper beneficioMapper, Validator validator) {
         this.beneficioRepository = beneficioRepository;
         this.beneficioEjbService = beneficioEjbService;
+        this.beneficioMapper = beneficioMapper;
         this.validator = validator;
     }
 
     @Override
-    public Page<BeneficioDto> listar(Pageable pageable, String nome, Boolean ativo) {
+    public Page<BeneficioDTO> listar(Pageable pageable, String nome, Boolean ativo) {
         try {
             Specification<Beneficio> spec = Specification.where(BeneficioSpec.nomeLike(nome))
                                                .and(BeneficioSpec.ativoIgual(ativo));
             Page<Beneficio> page = beneficioRepository.findAll(spec, pageable);
-            return page.map(beneficio -> new BeneficioDto(beneficio.getId(), beneficio.getNome(), beneficio.getDescricao(), beneficio.getValor(), beneficio.getAtivo(), beneficio.getVersion()));
+            return page.map(beneficioMapper::beneficioParaBeneficioDTO);
         } catch (Exception e) {
             log.error("Erro ao listar benefícios: {}", e.getMessage());
             throw new BackendException("Erro ao listar benefícios", BackEndExceptionEnum.ERRO_AO_LISTAR_BENEFICIOS);
@@ -59,19 +67,14 @@ public class BeneficioService implements IBeneficioService {
     }
 
     @Override
-    public BeneficioDto criar(BeneficioDto beneficioDto) {
+    public BeneficioDTO criar(BeneficioDTO beneficioDto) {
         try {
-            Beneficio beneficioCriar = new Beneficio();
-
-            beneficioCriar.setNome(beneficioDto.nome());
-            beneficioCriar.setDescricao(beneficioDto.descricao());
-            beneficioCriar.setValor(beneficioDto.valor());
-            beneficioCriar.setAtivo(beneficioDto.ativo());
+            Beneficio beneficioCriar = beneficioMapper.beneficioDTOParaBeneficio(beneficioDto);
 
             validarObjeto(beneficioCriar);
             Beneficio beneficioSalvar = beneficioRepository.save(beneficioCriar);
 
-            return new BeneficioDto(beneficioSalvar.getId(), beneficioSalvar.getNome(), beneficioSalvar.getDescricao(), beneficioSalvar.getValor(), beneficioSalvar.getAtivo(), beneficioSalvar.getVersion());
+            return beneficioMapper.beneficioParaBeneficioDTO(beneficioSalvar);
         } catch (BackendException e) {
             throw e;
         } catch (Exception e) {
@@ -81,10 +84,10 @@ public class BeneficioService implements IBeneficioService {
     }
 
     @Override
-    public BeneficioDto buscarPorId(Long id) {
+    public BeneficioDTO buscarPorId(Long id) {
         try {
             Beneficio beneficio = beneficioRepository.findById(id).orElseThrow(() -> new BackendException("Benefício não encontrado", HttpStatus.NOT_FOUND, BackEndExceptionEnum.BENEFICIO_NAO_ENCONTRADO));
-            return new BeneficioDto(beneficio.getId(), beneficio.getNome(), beneficio.getDescricao(), beneficio.getValor(), beneficio.getAtivo(), beneficio.getVersion());
+            return beneficioMapper.beneficioParaBeneficioDTO(beneficio);
         } catch (BackendException e) {
             throw e;
         } catch (Exception e) {
@@ -94,7 +97,7 @@ public class BeneficioService implements IBeneficioService {
     }
 
     @Override
-    public BeneficioDto atualizar(Long id, BeneficioDto beneficioDto) {
+    public BeneficioDTO atualizar(Long id, BeneficioDTO beneficioDto) {
         try {
 
             Beneficio beneficioAtualizar = beneficioRepository.findById(id).orElseThrow(() -> new BackendException("Benefício não encontrado", HttpStatus.NOT_FOUND, BackEndExceptionEnum.BENEFICIO_NAO_ENCONTRADO));
@@ -106,7 +109,7 @@ public class BeneficioService implements IBeneficioService {
             validarObjeto(beneficioAtualizar);
             Beneficio beneficioAtualizado = beneficioRepository.save(beneficioAtualizar);
 
-            return new BeneficioDto(beneficioAtualizado.getId(), beneficioAtualizado.getNome(), beneficioAtualizado.getDescricao(), beneficioAtualizado.getValor(), beneficioAtualizado.getAtivo(), beneficioAtualizado.getVersion());
+            return beneficioMapper.beneficioParaBeneficioDTO(beneficioAtualizado);
         } catch (BackendException e) {
             throw e;
         } catch (Exception e) {

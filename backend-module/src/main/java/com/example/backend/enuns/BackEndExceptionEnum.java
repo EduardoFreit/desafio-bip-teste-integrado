@@ -1,6 +1,11 @@
 
 package com.example.backend.enuns;
 
+/**
+ *
+ * Enum para tipos de exceções no backend
+ * @author lepf9
+ */
 public enum BackEndExceptionEnum {
     ERRO_GENERICO("Erro genérico no backend"),
     ERRO_AO_LISTAR_BENEFICIOS("Erro ao listar benefícios"),

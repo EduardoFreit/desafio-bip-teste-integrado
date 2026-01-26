@@ -11,10 +11,12 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.test.context.ActiveProfiles;
 
-import com.example.backend.dto.BeneficioDto;
+import com.example.backend.dto.BeneficioDTO;
 import com.example.backend.dto.TransferenciaRequest;
 import com.example.backend.enuns.BackEndExceptionEnum;
 import com.example.backend.exception.BackendException;
@@ -63,7 +65,7 @@ public class BeneficioServiceTest {
     @DisplayName("Deve listar todos beneficios")
     public void listarBeneficiosTest() {
         Pageable pageable = Pageable.unpaged();
-        Page<BeneficioDto> beneficiosPage = beneficioService.listar(pageable, null, null);
+        Page<BeneficioDTO> beneficiosPage = beneficioService.listar(pageable, null, null);
         assertEquals(3, beneficiosPage.getTotalElements());
     }
 
@@ -71,7 +73,7 @@ public class BeneficioServiceTest {
     @DisplayName("Deve listar beneficios com filtro de nome")
     public void listarBeneficiosComFiltroDeNomeTest() {
         Pageable pageable = Pageable.unpaged();
-        Page<BeneficioDto> beneficiosPage = beneficioService.listar(pageable, "Beneficio A", null);
+        Page<BeneficioDTO> beneficiosPage = beneficioService.listar(pageable, "Beneficio A", null);
         assertEquals(1, beneficiosPage.getTotalElements());
     }
 
@@ -79,17 +81,55 @@ public class BeneficioServiceTest {
     @DisplayName("Deve listar beneficios com filtro de ativo")
     public void listarBeneficiosComFiltroDeAtivoTest() {
         Pageable pageable = Pageable.unpaged();
-        Page<BeneficioDto> beneficiosPage = beneficioService.listar(pageable, null, true);
+        Page<BeneficioDTO> beneficiosPage = beneficioService.listar(pageable, null, true);
         assertEquals(2, beneficiosPage.getTotalElements());     
+    }
+
+    @Test
+    @DisplayName("Deve listar beneficios com filtro de nome e ativo")
+    public void listarBeneficiosComFiltroDeNomeEAtivoTest() {
+        Pageable pageable = Pageable.unpaged();
+        Page<BeneficioDTO> beneficiosPage = beneficioService.listar(pageable, "Beneficio B", true);
+        assertEquals(1, beneficiosPage.getTotalElements());     
+    }
+
+    @Test
+    @DisplayName("Deve listar beneficios ordenado por nome desc")
+    public void listarBeneficiosOrdenadoPorNomeDescTest() {
+        Pageable pageable = PageRequest.of(
+            0,
+            10,
+            Sort.by(Sort.Direction.DESC, "nome")
+        );  
+        Page<BeneficioDTO> beneficiosPage = beneficioService.listar(pageable, null, null);
+        assertEquals(3, beneficiosPage.getTotalElements()); 
+        assertEquals("Beneficio C", beneficiosPage.getContent().get(0).nome());
+        assertEquals("Beneficio B", beneficiosPage.getContent().get(1).nome());
+        assertEquals("Beneficio A", beneficiosPage.getContent().get(2).nome());
+    }
+
+    @Test
+    @DisplayName("Deve listar beneficios ordenado por nome asc")
+    public void listarBeneficiosOrdenadoPorNomeAscTest() {
+        Pageable pageable = PageRequest.of(
+            0,
+            10,
+            Sort.by(Sort.Direction.ASC, "nome")
+        );  
+        Page<BeneficioDTO> beneficiosPage = beneficioService.listar(pageable, null, null);
+        assertEquals(3, beneficiosPage.getTotalElements()); 
+        assertEquals("Beneficio A", beneficiosPage.getContent().get(0).nome());
+        assertEquals("Beneficio B", beneficiosPage.getContent().get(1).nome());
+        assertEquals("Beneficio C", beneficiosPage.getContent().get(2).nome());
     }
 
     @Test
     @DisplayName("Deve criar um novo beneficio")
     public void criarBeneficioTest() {
-        BeneficioDto novoBeneficio = new BeneficioDto(null, "Beneficio D", "Descricao D", new BigDecimal("1200.00"), true, null);
+        BeneficioDTO novoBeneficio = new BeneficioDTO(null, "Beneficio D", "Descricao D", new BigDecimal("1200.00"), true, null);
         beneficioService.criar(novoBeneficio);
         Pageable pageable = Pageable.unpaged();
-        Page<BeneficioDto> beneficiosPage = beneficioService.listar(pageable, null, null);
+        Page<BeneficioDTO> beneficiosPage = beneficioService.listar(pageable, null, null);
         assertEquals(4, beneficiosPage.getTotalElements()); 
     }
     
@@ -97,9 +137,9 @@ public class BeneficioServiceTest {
     @DisplayName("Deve buscar beneficio por ID")
     public void buscarBeneficioPorIdTest() {
         Pageable pageable = Pageable.unpaged();
-        Page<BeneficioDto> beneficiosPage = beneficioService.listar(pageable, null, true);
-        BeneficioDto primeiroBeneficio = beneficiosPage.getContent().get(0);
-        BeneficioDto beneficioDto = beneficioService.buscarPorId(primeiroBeneficio.id());
+        Page<BeneficioDTO> beneficiosPage = beneficioService.listar(pageable, null, true);
+        BeneficioDTO primeiroBeneficio = beneficiosPage.getContent().get(0);
+        BeneficioDTO beneficioDto = beneficioService.buscarPorId(primeiroBeneficio.id());
         assertEquals(primeiroBeneficio.id(), beneficioDto.id());
     }
 
@@ -107,15 +147,15 @@ public class BeneficioServiceTest {
     @DisplayName("Deve atualizar um beneficio existente")
     public void atualizarBeneficioTest() {
         Pageable pageable = Pageable.unpaged();
-        Page<BeneficioDto> beneficiosPage = beneficioService.listar(pageable, null, true);
-        BeneficioDto primeiroBeneficio = beneficiosPage.getContent().get(0);
+        Page<BeneficioDTO> beneficiosPage = beneficioService.listar(pageable, null, true);
+        BeneficioDTO primeiroBeneficio = beneficiosPage.getContent().get(0);
         
         String novoNome = "Beneficio A Atualizado";
         String novaDescricao = "Descricao A Atualizada";
         Boolean novoAtivo = false;
 
-        BeneficioDto beneficioAtualizado = new BeneficioDto(primeiroBeneficio.id(), novoNome, novaDescricao, primeiroBeneficio.valor(), novoAtivo, primeiroBeneficio.version());
-        BeneficioDto beneficioDto = beneficioService.atualizar(primeiroBeneficio.id(), beneficioAtualizado);
+        BeneficioDTO beneficioAtualizado = new BeneficioDTO(primeiroBeneficio.id(), novoNome, novaDescricao, primeiroBeneficio.valor(), novoAtivo, primeiroBeneficio.version());
+        BeneficioDTO beneficioDto = beneficioService.atualizar(primeiroBeneficio.id(), beneficioAtualizado);
         assertEquals(novoNome, beneficioDto.nome());
         assertEquals(novaDescricao, beneficioDto.descricao());
         assertEquals(novoAtivo, beneficioDto.ativo());
@@ -125,11 +165,11 @@ public class BeneficioServiceTest {
     @DisplayName("Deve deletar um beneficio existente")
     public void deletarBeneficioTest() {
         Pageable pageable = Pageable.unpaged();
-        Page<BeneficioDto> beneficiosPage = beneficioService.listar(pageable, null, null);
+        Page<BeneficioDTO> beneficiosPage = beneficioService.listar(pageable, null, null);
         assertEquals(3, beneficiosPage.getTotalElements()); 
-        BeneficioDto primeiroBeneficio = beneficiosPage.getContent().get(0);    
+        BeneficioDTO primeiroBeneficio = beneficiosPage.getContent().get(0);    
         beneficioService.deletar(primeiroBeneficio.id());
-        Page<BeneficioDto> beneficiosAposDelecao = beneficioService.listar(pageable, null, null);
+        Page<BeneficioDTO> beneficiosAposDelecao = beneficioService.listar(pageable, null, null);
         assertEquals(2, beneficiosAposDelecao.getTotalElements()); 
     }
 
@@ -137,13 +177,13 @@ public class BeneficioServiceTest {
     @DisplayName("Deve transferir valor entre beneficios")
     public void transferirValorEntreBeneficiosTest() {
         Pageable pageable = Pageable.unpaged();
-        Page<BeneficioDto> beneficiosPage = beneficioService.listar(pageable, null, true);
-        BeneficioDto beneficioOrigem = beneficiosPage.getContent().get(0);
-        BeneficioDto beneficioDestino = beneficiosPage.getContent().get(1);
+        Page<BeneficioDTO> beneficiosPage = beneficioService.listar(pageable, null, true);
+        BeneficioDTO beneficioOrigem = beneficiosPage.getContent().get(0);
+        BeneficioDTO beneficioDestino = beneficiosPage.getContent().get(1);
         BigDecimal valorTransferencia = new BigDecimal("200.00");
         beneficioService.transferir(new TransferenciaRequest(beneficioOrigem.id(), beneficioDestino.id(), valorTransferencia));
-        BeneficioDto beneficioOrigemAposTransferencia = beneficioService.buscarPorId(beneficioOrigem.id());
-        BeneficioDto beneficioDestinoAposTransferencia = beneficioService.buscarPorId(beneficioDestino.id());
+        BeneficioDTO beneficioOrigemAposTransferencia = beneficioService.buscarPorId(beneficioOrigem.id());
+        BeneficioDTO beneficioDestinoAposTransferencia = beneficioService.buscarPorId(beneficioDestino.id());
         assertEquals(beneficioOrigem.valor().subtract(valorTransferencia), beneficioOrigemAposTransferencia.valor());
         assertEquals(beneficioDestino.valor().add(valorTransferencia), beneficioDestinoAposTransferencia.valor());
     }
@@ -168,7 +208,7 @@ public class BeneficioServiceTest {
     @DisplayName("Deve falhar ao atualizar beneficio inexistente")
     public void atualizarBeneficioInexistenteTest() {
         Long idInexistente = 999L;
-        BeneficioDto beneficioAtualizado = new BeneficioDto(idInexistente, "Nome Inexistente", "Descricao Inexistente", new BigDecimal("0.00"), true, null);
+        BeneficioDTO beneficioAtualizado = new BeneficioDTO(idInexistente, "Nome Inexistente", "Descricao Inexistente", new BigDecimal("0.00"), true, null);
 
         BackendException ex = assertThrows(
             BackendException.class,
@@ -201,9 +241,9 @@ public class BeneficioServiceTest {
     @DisplayName("Deve falhar ao transferir valor entre beneficios com saldo insuficiente")
     public void transferirValorEntreBeneficiosComSaldoInsuficienteTest() {
         Pageable pageable = Pageable.unpaged();
-        Page<BeneficioDto> beneficiosPage = beneficioService.listar(pageable, null, true);
-        BeneficioDto beneficioOrigem = beneficiosPage.getContent().get(0);
-        BeneficioDto beneficioDestino = beneficiosPage.getContent().get(1);
+        Page<BeneficioDTO> beneficiosPage = beneficioService.listar(pageable, null, true);
+        BeneficioDTO beneficioOrigem = beneficiosPage.getContent().get(0);
+        BeneficioDTO beneficioDestino = beneficiosPage.getContent().get(1);
         BigDecimal valorTransferencia = beneficioOrigem.valor().add(new BigDecimal("10000.00"));
         
         BackendException ex = assertThrows(
@@ -221,8 +261,8 @@ public class BeneficioServiceTest {
     @DisplayName("Deve falhar ao transferir valor entre beneficios quando conta origem não existe")
     public void transferirValorEntreBeneficiosContaOrigemInexistenteTest() {
         Pageable pageable = Pageable.unpaged();
-        Page<BeneficioDto> beneficiosPage = beneficioService.listar(pageable, null, true);
-        BeneficioDto beneficioDestino = beneficiosPage.getContent().get(1);
+        Page<BeneficioDTO> beneficiosPage = beneficioService.listar(pageable, null, true);
+        BeneficioDTO beneficioDestino = beneficiosPage.getContent().get(1);
         BigDecimal valorTransferencia = new BigDecimal("100.00");
        
         BackendException ex = assertThrows(
@@ -240,8 +280,8 @@ public class BeneficioServiceTest {
     @DisplayName("Deve falhar ao transferir valor entre beneficios quando conta destino não existe")
     public void transferirValorEntreBeneficiosContaDestinoInexistenteTest() {
         Pageable pageable = Pageable.unpaged();
-        Page<BeneficioDto> beneficiosPage = beneficioService.listar(pageable, null, true);
-        BeneficioDto beneficioOrigem = beneficiosPage.getContent().get(0);
+        Page<BeneficioDTO> beneficiosPage = beneficioService.listar(pageable, null, true);
+        BeneficioDTO beneficioOrigem = beneficiosPage.getContent().get(0);
         BigDecimal valorTransferencia = new BigDecimal("100.00");
 
         BackendException ex = assertThrows(
@@ -275,10 +315,10 @@ public class BeneficioServiceTest {
     @DisplayName("Deve falhar ao transferir valor entre beneficios com conta inativa")
     public void transferirValorEntreBeneficiosComContaInativaTest() {
         Pageable pageable = Pageable.unpaged();
-        Page<BeneficioDto> beneficiosPage = beneficioService.listar(pageable, null, false);
-        BeneficioDto beneficioInativo = beneficiosPage.getContent().get(0);
+        Page<BeneficioDTO> beneficiosPage = beneficioService.listar(pageable, null, false);
+        BeneficioDTO beneficioInativo = beneficiosPage.getContent().get(0);
         beneficiosPage = beneficioService.listar(pageable, null, true);
-        BeneficioDto beneficioAtivo = beneficiosPage.getContent().get(0);
+        BeneficioDTO beneficioAtivo = beneficiosPage.getContent().get(0);
         BigDecimal valorTransferencia = new BigDecimal("100.00");
         
         BackendException ex = assertThrows(

@@ -6,7 +6,7 @@ import java.math.BigDecimal;
  * DTO para transporte de dados de Benefício.
  * Contém informações de nome, descrição, valor e status de ativação.
  */
-public record BeneficioDto(
+public record BeneficioDTO(
     Long id, 
     String nome, 
     String descricao, 
@@ -14,7 +14,7 @@ public record BeneficioDto(
     Boolean ativo,
     Long version) {
 
-        public BeneficioDto {
+        public BeneficioDTO {
             if (ativo == null) {
                 ativo = true;
             }

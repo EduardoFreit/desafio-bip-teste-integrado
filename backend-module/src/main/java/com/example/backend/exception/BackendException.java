@@ -4,6 +4,11 @@ import org.springframework.http.HttpStatus;
 
 import com.example.backend.enuns.BackEndExceptionEnum;
 
+/**
+ *
+ * Exceção personalizada para o backend
+ * @author lepf9
+ */
 public class BackendException extends RuntimeException {
 
     private HttpStatus status = HttpStatus.INTERNAL_SERVER_ERROR;

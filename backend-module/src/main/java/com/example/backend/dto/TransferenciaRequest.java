@@ -8,6 +8,7 @@ import jakarta.validation.constraints.Positive;
 /**
  * Objeto para transporte de dados de transferência.
  * Contém informações de conta de origem, conta de destino e valor da transferência.
+ * @author lepf9
  */
 public record TransferenciaRequest(
     @NotNull(message = "O benefício de origem da transferência é obrigatório") Long contaOrigemId,

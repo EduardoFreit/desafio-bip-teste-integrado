@@ -5,7 +5,7 @@ import org.springframework.data.jpa.domain.Specification;
 import com.example.ejb.model.Beneficio;
 
 /**
- *
+ * Especificações para consultas de Benefício
  * @author lepf9
  */
 public class BeneficioSpec {

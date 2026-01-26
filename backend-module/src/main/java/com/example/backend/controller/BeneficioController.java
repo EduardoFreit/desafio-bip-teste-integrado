@@ -1,5 +1,6 @@
 package com.example.backend.controller;
 
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -16,17 +17,25 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import com.example.backend.dto.BeneficioDto;
+import com.example.backend.dto.BeneficioDTO;
 import com.example.backend.dto.TransferenciaRequest;
 import com.example.backend.service.interfaces.IBeneficioService;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ *
+ * Controller para gerenciamento de benefícios
+ * 
+ */
 @RestController
 @RequestMapping("/api/v1/beneficios")
 @Slf4j
+@Tag(name = "Gerenciamento de Benefícios", description = "Métodos para gerenciar benefícios e transferências de valores entre eles")
 public class BeneficioController {
 
     private final IBeneficioService beneficioService;
@@ -36,9 +45,11 @@ public class BeneficioController {
     }
 
     @GetMapping("/listar")
-    public ResponseEntity<Page<BeneficioDto>> listar(
+    @Operation(summary = "Listar benefícios", description = "Retorna uma lista com os benefícios cadastrados no sistema.")
+    public ResponseEntity<Page<BeneficioDTO>> listar(
         @RequestParam(required = false, name="nome") String nome,
         @RequestParam(required = false, name="ativo") Boolean ativo,
+        @ParameterObject
         @PageableDefault(
             size = 5,
             page = 0,
@@ -48,7 +59,7 @@ public class BeneficioController {
         
         log.info("Listando benefícios com nome: {} e ativo: {}", nome, ativo);
 
-        Page<BeneficioDto> page = beneficioService.listar(pageable, nome, ativo);
+        Page<BeneficioDTO> page = beneficioService.listar(pageable, nome, ativo);
 
         log.info("Benefícios listados com sucesso, total de elementos: {}", page.getTotalElements());
 
@@ -56,11 +67,12 @@ public class BeneficioController {
     }
 
     @PostMapping
-    public ResponseEntity<BeneficioDto> criar(@RequestBody BeneficioDto dto, UriComponentsBuilder uriBuilder) {
+    @Operation(summary = "Criar benefício", description = "Cria um novo benefício no sistema.")
+    public ResponseEntity<BeneficioDTO> criar(@RequestBody BeneficioDTO dto, UriComponentsBuilder uriBuilder) {
         
         log.info("Criando benefício: {}", dto);
         
-        BeneficioDto created = beneficioService.criar(dto);
+        BeneficioDTO created = beneficioService.criar(dto);
         var uri = uriBuilder.path("/api/v1/beneficios/{id}").buildAndExpand(created.id()).toUri();
         
         log.info("Benefício criado com sucesso: {}", created);
@@ -69,11 +81,12 @@ public class BeneficioController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<BeneficioDto> buscarPorId(@NotNull @PathVariable("id") Long id) {
+    @Operation(summary = "Buscar benefício por ID", description = "Retorna os dados de um benefício específico pelo seu ID.")
+    public ResponseEntity<BeneficioDTO> buscarPorId(@NotNull @PathVariable("id") Long id) {
         
         log.info("Buscando benefício por ID: {}", id);
         
-        BeneficioDto dto = beneficioService.buscarPorId(id);
+        BeneficioDTO dto = beneficioService.buscarPorId(id);
 
         log.info("Benefício encontrado: {}", dto);
 
@@ -81,11 +94,12 @@ public class BeneficioController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<BeneficioDto> atualizar(@NotNull @PathVariable("id") Long id, @Valid @RequestBody BeneficioDto dto) {
+    @Operation(summary = "Atualizar benefício", description = "Atualiza os dados de um benefício existente.")
+    public ResponseEntity<BeneficioDTO> atualizar(@NotNull @PathVariable("id") Long id, @Valid @RequestBody BeneficioDTO dto) {
         
         log.info("Atualizando benefício ID: {} com dados: {}", id, dto);
         
-        BeneficioDto updated = beneficioService.atualizar(id, dto);
+        BeneficioDTO updated = beneficioService.atualizar(id, dto);
 
         log.info("Benefício atualizado com sucesso: {}", updated);
 
@@ -93,6 +107,7 @@ public class BeneficioController {
     }
 
     @DeleteMapping("/{id}")
+    @Operation(summary = "Deletar benefício", description = "Deleta um benefício existente pelo seu ID.")
     public ResponseEntity<Void> deletar(@NotNull @PathVariable("id") Long id) {
 
         log.info("Deletando benefício por ID: {}", id);
@@ -105,7 +120,8 @@ public class BeneficioController {
     }
 
     @PostMapping("/transferir")
-    public ResponseEntity<Void> transferir(@RequestBody TransferenciaRequest request) {
+    @Operation(summary = "Transferir valor entre benefícios", description = "Realiza a transferência de valor entre dois benefícios.")
+    public ResponseEntity<Void> transferir(@ParameterObject @RequestBody TransferenciaRequest request) {
 
         log.info("Iniciando transferência entre benefícios: {}", request);
 
