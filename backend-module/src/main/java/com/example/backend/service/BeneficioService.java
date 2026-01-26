@@ -102,9 +102,7 @@ public class BeneficioService implements IBeneficioService {
 
             Beneficio beneficioAtualizar = beneficioRepository.findById(id).orElseThrow(() -> new BackendException("Benefício não encontrado", HttpStatus.NOT_FOUND, BackEndExceptionEnum.BENEFICIO_NAO_ENCONTRADO));
 
-            beneficioAtualizar.setNome(beneficioDto.nome());
-            beneficioAtualizar.setDescricao(beneficioDto.descricao());
-            beneficioAtualizar.setAtivo(beneficioDto.ativo());
+            beneficioMapper.beneficioDTOParaBeneficioAtualizar(beneficioDto, beneficioAtualizar);
 
             validarObjeto(beneficioAtualizar);
             Beneficio beneficioAtualizado = beneficioRepository.save(beneficioAtualizar);

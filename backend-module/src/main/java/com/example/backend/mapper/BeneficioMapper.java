@@ -43,4 +43,13 @@ public class BeneficioMapper implements IBeneficioMapper {
         beneficio.setVersion(dto.version());
         return beneficio;
     }
+
+    @Override
+    public void beneficioDTOParaBeneficioAtualizar(BeneficioDTO dto, Beneficio beneficio) {
+        beneficio.setNome(dto.nome());
+        beneficio.setDescricao(dto.descricao());
+        beneficio.setAtivo(dto.ativo());
+    }
+
+
 }

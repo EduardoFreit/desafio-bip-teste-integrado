@@ -1,5 +1,6 @@
 package com.example.backend.controller;
 
+import org.slf4j.MDC;
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -19,6 +20,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import com.example.backend.dto.BeneficioDTO;
 import com.example.backend.dto.TransferenciaRequest;
+import com.example.backend.exception.BackendException;
 import com.example.backend.service.interfaces.IBeneficioService;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -122,13 +124,21 @@ public class BeneficioController {
     @PostMapping("/transferir")
     @Operation(summary = "Transferir valor entre benefícios", description = "Realiza a transferência de valor entre dois benefícios.")
     public ResponseEntity<Void> transferir(@ParameterObject @RequestBody TransferenciaRequest request) {
+        try {
 
-        log.info("Iniciando transferência entre benefícios: {}", request);
+            MDC.put("tag", "TRANSFERENCIA");
 
-        beneficioService.transferir(request);
+            log.info("Iniciando transferência entre benefícios: {}", request);
 
-        log.info("Transferência realizada com sucesso entre benefícios: {}", request);
+            beneficioService.transferir(request);
 
-        return ResponseEntity.ok().build();
+            log.info("Transferência realizada com sucesso entre benefícios: {}", request);
+
+            return ResponseEntity.ok().build();
+        } catch (BackendException e) {
+            throw e;
+        } finally {
+            MDC.remove("tag");
+        }
     }
 }

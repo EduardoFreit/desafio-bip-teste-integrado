@@ -11,4 +11,5 @@ import com.example.ejb.model.Beneficio;
 public interface IBeneficioMapper {
     BeneficioDTO beneficioParaBeneficioDTO(Beneficio beneficio);
     Beneficio beneficioDTOParaBeneficio(BeneficioDTO dto);
+    void beneficioDTOParaBeneficioAtualizar(BeneficioDTO dto, Beneficio beneficio);
 }
