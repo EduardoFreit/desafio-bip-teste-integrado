@@ -1,4 +1,25 @@
 package com.example.backend.dto;
 
-public record BeneficioDto(String nome) {
+import java.math.BigDecimal;
+
+/**
+ * DTO para transporte de dados de Benefício.
+ * Contém informações de nome, descrição, valor e status de ativação.
+ */
+public record BeneficioDto(
+    Long id, 
+    String nome, 
+    String descricao, 
+    BigDecimal valor, 
+    Boolean ativo,
+    Long version) {
+
+        public BeneficioDto {
+            if (ativo == null) {
+                ativo = true;
+            }
+            if (valor == null) {
+                valor = BigDecimal.ZERO;
+            }
+        }
 }

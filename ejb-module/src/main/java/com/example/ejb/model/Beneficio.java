@@ -10,14 +10,12 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import jakarta.persistence.Version;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
 import jakarta.validation.constraints.PositiveOrZero;
-import lombok.Getter;
-import lombok.Setter;
+import jakarta.validation.constraints.Size;
+import lombok.Data;
 
 @Entity
-@Getter
-@Setter
+@Data
 @Table(name = "BENEFICIO")
 public class Beneficio {
 
@@ -25,16 +23,16 @@ public class Beneficio {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotNull
-    @Size(min = 1, max = 100)
+    @NotNull(message="Nome do benefício é obrigatório")
+    @Size(min = 1, max = 100, message="Nome do benefício deve ter entre 1 e 100 caracteres")
     @Column(nullable = false)
     private String nome;
 
-    @Size(max = 255)
+    @Size(max = 255, message="Descrição do benefício deve ter no máximo 255 caracteres")
     private String descricao;
 
-    @NotNull
-    @PositiveOrZero
+    @NotNull(message="Valor do benefício é obrigatório")
+    @PositiveOrZero(message="O valor do benefício deve ser positivo ou zero")
     @Column(nullable = false, precision = 15, scale = 2)
     private BigDecimal valor;
 
@@ -43,5 +41,5 @@ public class Beneficio {
 
     @Version
     @Column(nullable = false)
-    private Long version;
+    private Long version = 0L;
 }

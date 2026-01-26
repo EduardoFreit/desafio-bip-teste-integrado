@@ -2,6 +2,7 @@ package com.example.ejb.service;
 
 import java.math.BigDecimal;
 
+import com.example.ejb.exception.ContaInativaException;
 import com.example.ejb.exception.ContaNaoEncontradaException;
 import com.example.ejb.exception.SaldoInsuficienteException;
 import com.example.ejb.model.Beneficio;
@@ -24,39 +25,20 @@ public class BeneficioEjbService {
     private EntityManager em;
 
     public void transferir(Long contaOrigemId, Long contaDestinoId, BigDecimal valor) 
-        throws SaldoInsuficienteException, ContaNaoEncontradaException, OptimisticLockException {
+        throws SaldoInsuficienteException, ContaNaoEncontradaException, OptimisticLockException, ContaInativaException {
         
         try {
 
-            // 1. Validações iniciais
-            validacaoInicialTransferencia(contaOrigemId, contaDestinoId, valor);
+            validacaoInicialTransferir(contaOrigemId, contaDestinoId, valor);
 
-            // 2. Buscar entidades (sem lock ainda)
             Beneficio origem = em.find(Beneficio.class, contaOrigemId, LockModeType.OPTIMISTIC);
             Beneficio destino = em.find(Beneficio.class, contaDestinoId, LockModeType.OPTIMISTIC);
             
-            if (origem == null) {
-                log.error("Conta de origem não encontrada: {}", contaOrigemId);
-                throw new ContaNaoEncontradaException();
-            }
-
-            if (destino == null) {
-                log.error("Conta de destino não encontrada: {}", contaDestinoId);
-                throw new ContaNaoEncontradaException();
-            }
+            validacaoFinalTransferir(origem, destino, valor, contaOrigemId, contaDestinoId);
             
-            // 3. Validar saldo
-            if (origem.getValor().compareTo(valor) < 0) {
-                log.error("Saldo insuficiente na conta de origem: origemId={}, saldo={}, valorSolicitado={}", 
-                        contaOrigemId, origem.getValor(), valor);
-                throw new SaldoInsuficienteException("Saldo insuficiente");
-            }
-            
-            // 5. Executar transferência
             origem.setValor(origem.getValor().subtract(valor));
             destino.setValor(destino.getValor().add(valor));
 
-            // Força execução e detecção de conflito de versão
             em.flush();
 
             log.info("Transferência realizada com sucesso: origemId={}, destinoId={}, valor={}, " +
@@ -68,15 +50,15 @@ public class BeneficioEjbService {
         }
     }
 
-    private void validacaoInicialTransferencia(Long contaOrigemId, Long contaDestinoId, BigDecimal valor) {
+    private void validacaoInicialTransferir(Long contaOrigemId, Long contaDestinoId, BigDecimal valor) {
         if (contaOrigemId == null) {
             log.error("Conta de origem inválida: null");
-            throw new IllegalArgumentException("Conta de origem inválida");
+            throw new IllegalArgumentException("Id da conta de origem inválida");
         }
 
         if (contaDestinoId == null) {
             log.error("Conta de destino inválida: null");
-            throw new IllegalArgumentException("Conta de destino inválida");
+            throw new IllegalArgumentException("Id da conta de destino inválida");
         }
 
         if (contaOrigemId.equals(contaDestinoId)) {
@@ -87,6 +69,35 @@ public class BeneficioEjbService {
         if (valor == null || valor.compareTo(BigDecimal.ZERO) <= 0) {
             log.error("Valor de transferência inválido: {}", valor);
             throw new IllegalArgumentException("Valor deve ser positivo");
+        }
+    }
+
+    private void validacaoFinalTransferir(Beneficio origem, Beneficio destino, BigDecimal valor, Long contaOrigemId, Long contaDestinoId) 
+        throws SaldoInsuficienteException, ContaNaoEncontradaException, ContaInativaException {
+        if (origem == null) {
+            log.error("Conta de origem não encontrada: {}", contaOrigemId);
+            throw new ContaNaoEncontradaException("Conta de origem não encontrada");
+        }
+
+        if (destino == null) {
+            log.error("Conta de destino não encontrada: {}", contaDestinoId);
+            throw new ContaNaoEncontradaException("Conta de destino não encontrada");
+        }
+
+        if (origem.getAtivo() == null || !origem.getAtivo()) {
+            log.error("Conta de origem inativa: {}", contaOrigemId);
+            throw new ContaInativaException("Conta de origem inativa");
+        }
+
+        if (destino.getAtivo() == null || !destino.getAtivo()) {
+            log.error("Conta de destino inativa: {}", contaDestinoId);
+            throw new ContaInativaException("Conta de destino inativa");
+        }
+        
+        if (origem.getValor().compareTo(valor) < 0) {
+            log.error("Saldo insuficiente na conta de origem: origemId={}, saldo={}, valorSolicitado={}", 
+                    contaOrigemId, origem.getValor(), valor);
+            throw new SaldoInsuficienteException("Saldo insuficiente");
         }
     }
 }

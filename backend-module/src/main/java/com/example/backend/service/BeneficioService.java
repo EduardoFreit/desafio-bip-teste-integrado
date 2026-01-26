@@ -1,25 +1,178 @@
 package com.example.backend.service;
 
-import java.util.List;
-
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
+import org.springframework.stereotype.Service;
 
 import com.example.backend.dto.BeneficioDto;
+import com.example.backend.dto.TransferenciaRequest;
+import com.example.backend.exception.BackendException;
 import com.example.backend.repository.BeneficioRepository;
 import com.example.backend.service.interfaces.IBeneficioService;
+import com.example.backend.specification.BeneficioSpec;
 
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import org.springframework.http.HttpStatus;
+
+import com.example.backend.enuns.BackEndExceptionEnum;
+import com.example.ejb.exception.ContaInativaException;
+import com.example.ejb.exception.ContaNaoEncontradaException;
+import com.example.ejb.exception.SaldoInsuficienteException;
+import com.example.ejb.model.Beneficio;
+import com.example.ejb.service.BeneficioEjbService;
+
+import jakarta.persistence.OptimisticLockException;
+import jakarta.transaction.Transactional;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.Validator;
+import lombok.extern.slf4j.Slf4j;
+
+@Service
+@Transactional
+@Slf4j
 public class BeneficioService implements IBeneficioService {
 
+    private final BeneficioRepository beneficioRepository;
+    private final BeneficioEjbService beneficioEjbService;
+    private final Validator validator;
 
-    @Autowired
-    private BeneficioRepository beneficioRepository;
+    public BeneficioService(BeneficioRepository beneficioRepository, BeneficioEjbService beneficioEjbService, Validator validator) {
+        this.beneficioRepository = beneficioRepository;
+        this.beneficioEjbService = beneficioEjbService;
+        this.validator = validator;
+    }
 
     @Override
-    public List<BeneficioDto> listarBeneficios() {
-        // Implementação do método para listar benefícios
-        return beneficioRepository.findAll()
-                .stream()
-                .map(beneficio -> new BeneficioDto(beneficio.getNome()))
-                .toList();
+    public Page<BeneficioDto> listar(Pageable pageable, String nome, Boolean ativo) {
+        try {
+            Specification<Beneficio> spec = Specification.where(BeneficioSpec.nomeLike(nome))
+                                               .and(BeneficioSpec.ativoIgual(ativo));
+            Page<Beneficio> page = beneficioRepository.findAll(spec, pageable);
+            return page.map(beneficio -> new BeneficioDto(beneficio.getId(), beneficio.getNome(), beneficio.getDescricao(), beneficio.getValor(), beneficio.getAtivo(), beneficio.getVersion()));
+        } catch (Exception e) {
+            log.error("Erro ao listar benefícios: {}", e.getMessage());
+            throw new BackendException("Erro ao listar benefícios", BackEndExceptionEnum.ERRO_AO_LISTAR_BENEFICIOS);
+        }
     }
+
+    @Override
+    public BeneficioDto criar(BeneficioDto beneficioDto) {
+        try {
+            Beneficio beneficioCriar = new Beneficio();
+
+            beneficioCriar.setNome(beneficioDto.nome());
+            beneficioCriar.setDescricao(beneficioDto.descricao());
+            beneficioCriar.setValor(beneficioDto.valor());
+            beneficioCriar.setAtivo(beneficioDto.ativo());
+
+            validarObjeto(beneficioCriar);
+            Beneficio beneficioSalvar = beneficioRepository.save(beneficioCriar);
+
+            return new BeneficioDto(beneficioSalvar.getId(), beneficioSalvar.getNome(), beneficioSalvar.getDescricao(), beneficioSalvar.getValor(), beneficioSalvar.getAtivo(), beneficioSalvar.getVersion());
+        } catch (BackendException e) {
+            throw e;
+        } catch (Exception e) {
+            log.error("Erro ao criar benefício: {}", e.getMessage());
+            throw new BackendException("Erro ao criar benefício", BackEndExceptionEnum.ERRO_AO_CRIAR_BENEFICIO);
+        }
+    }
+
+    @Override
+    public BeneficioDto buscarPorId(Long id) {
+        try {
+            Beneficio beneficio = beneficioRepository.findById(id).orElseThrow(() -> new BackendException("Benefício não encontrado", HttpStatus.NOT_FOUND, BackEndExceptionEnum.BENEFICIO_NAO_ENCONTRADO));
+            return new BeneficioDto(beneficio.getId(), beneficio.getNome(), beneficio.getDescricao(), beneficio.getValor(), beneficio.getAtivo(), beneficio.getVersion());
+        } catch (BackendException e) {
+            throw e;
+        } catch (Exception e) {
+            log.error("Erro ao buscar benefício({}): {}", id, e.getMessage());
+            throw new BackendException("Erro ao buscar benefício", BackEndExceptionEnum.ERRO_AO_BUSCAR_BENEFICIO_POR_ID);
+        }
+    }
+
+    @Override
+    public BeneficioDto atualizar(Long id, BeneficioDto beneficioDto) {
+        try {
+
+            Beneficio beneficioAtualizar = beneficioRepository.findById(id).orElseThrow(() -> new BackendException("Benefício não encontrado", HttpStatus.NOT_FOUND, BackEndExceptionEnum.BENEFICIO_NAO_ENCONTRADO));
+
+            beneficioAtualizar.setNome(beneficioDto.nome());
+            beneficioAtualizar.setDescricao(beneficioDto.descricao());
+            beneficioAtualizar.setAtivo(beneficioDto.ativo());
+
+            validarObjeto(beneficioAtualizar);
+            Beneficio beneficioAtualizado = beneficioRepository.save(beneficioAtualizar);
+
+            return new BeneficioDto(beneficioAtualizado.getId(), beneficioAtualizado.getNome(), beneficioAtualizado.getDescricao(), beneficioAtualizado.getValor(), beneficioAtualizado.getAtivo(), beneficioAtualizado.getVersion());
+        } catch (BackendException e) {
+            throw e;
+        } catch (Exception e) {
+            log.error("Erro ao atualizar benefício({}): {}", id, e.getMessage());
+            throw new BackendException("Erro ao atualizar benefício", BackEndExceptionEnum.ERRO_AO_ATUALIZAR_BENEFICIO);
+        }
+    }
+
+    @Override
+    public void deletar(Long id) {
+        try {
+            if (!beneficioRepository.existsById(id)) {
+                throw new BackendException("Benefício não encontrado", HttpStatus.NOT_FOUND, BackEndExceptionEnum.BENEFICIO_NAO_ENCONTRADO);
+            }
+            beneficioRepository.deleteById(id);
+        } catch (BackendException e) {
+            throw e;
+        } catch (Exception e) {
+            log.error("Erro ao deletar benefício({}): {}", id, e.getMessage());
+            throw new BackendException("Erro ao deletar benefício", BackEndExceptionEnum.ERRO_AO_DELETAR_BENEFICIO);
+        }
+    }
+
+    @Override
+    public void transferir(TransferenciaRequest request) {
+        try {
+            validarObjeto(request);
+            beneficioEjbService.transferir(request.contaOrigemId(), request.contaDestinoId(), request.valor());
+        } catch (BackendException e) {
+            throw new BackendException(e.getMessage(), e.getStatus(), BackEndExceptionEnum.ERRO_AO_TRANSFERIR_ARGUMENTO_INVALIDO );
+        } catch (IllegalArgumentException e) {
+            log.error("Argumento inválido na transferência: {}", e.getMessage());
+            throw new BackendException(e.getMessage(), HttpStatus.BAD_REQUEST, BackEndExceptionEnum.ERRO_AO_TRANSFERIR_ARGUMENTO_INVALIDO);
+        } catch (SaldoInsuficienteException e) {
+            log.error("Saldo insuficiente na transferência: {}", e.getMessage());
+            throw new BackendException(e.getMessage(), HttpStatus.UNPROCESSABLE_ENTITY, BackEndExceptionEnum.ERRO_AO_TRANSFERIR_SALDO_INSUFICIENTE);
+        } catch (ContaInativaException e) {
+            log.error("Conta inativa na transferência: {}", e.getMessage());
+            throw new BackendException(e.getMessage(), HttpStatus.FORBIDDEN, BackEndExceptionEnum.ERRO_AO_TRANSFERIR_CONTA_INATIVA);
+        } catch (ContaNaoEncontradaException e) {
+            log.error("Conta não encontrada na transferência: {}", e.getMessage());
+            throw new BackendException(e.getMessage(), HttpStatus.NOT_FOUND, BackEndExceptionEnum.ERRO_AO_TRANSFERIR_CONTA_NAO_ENCONTRADA);
+        } catch (OptimisticLockException e) {
+            log.error("Conflito de versão na transferência: {}", e.getMessage());
+            throw new BackendException(e.getMessage(), HttpStatus.CONFLICT, BackEndExceptionEnum.ERRO_AO_TRANSFERIR_CONFLITO_VERSAO);
+        } catch (Exception e) {
+            log.error("Erro ao realizar transferência: {}", e.getMessage());
+            throw new BackendException("Erro ao realizar transferência", BackEndExceptionEnum.ERRO_AO_TRANSFERIR_VALOR_ENTRE_BENEFICIOS);
+        }
+    }
+
+    /**
+     * Valida objeto utilizando Bean Validation.
+     *
+     * @param <T> Tipo da objeto a ser validado.
+     * @param objeto Objeto a ser validado.
+     * @throws BackendException se houver violações de restrições.
+     */
+    private <T> void validarObjeto(T objeto) {
+        Set<ConstraintViolation<T>> violations = validator.validate(objeto);
+        if (!violations.isEmpty()) {
+            String mensagens = violations.stream()
+                    .map(ConstraintViolation::getMessage)
+                    .collect(Collectors.joining(", "));
+            throw new BackendException(mensagens, HttpStatus.BAD_REQUEST);
+        }
+    }
+
 }
