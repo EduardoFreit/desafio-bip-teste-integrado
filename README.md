@@ -25,6 +25,26 @@ Este projeto utiliza Maven como gerenciador de dependências e build. O arquivo 
    cd backend-module
    mvn spring-boot:run
    ```
+### Passos para rodar o frontend
+1. Certifique-se de que o backend está rodando (veja instruções acima).
+2. Acesse a pasta do frontend:
+   ```sh
+   cd frontend
+   ```
+3. Instale as dependências:
+   ```sh
+   npm install
+   ```
+4. Gere os serviços e modelos TypeScript a partir do contrato OpenAPI do backend:
+   ```sh
+   npm run generate-api
+   ```
+   > Este comando garante que o frontend esteja sincronizado com a API backend.
+5. Inicie o servidor de desenvolvimento Angular:
+   ```sh
+   npm run start
+   ```
+6. Acesse a aplicação em: http://localhost:4200
 
 ### Banco de Dados
 

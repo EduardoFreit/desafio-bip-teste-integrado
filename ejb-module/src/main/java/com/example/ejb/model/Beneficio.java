@@ -15,6 +15,10 @@ import jakarta.validation.constraints.PositiveOrZero;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
 
+/**
+ * Entidade que representa uma conta/benefício.
+ * @author lepf9
+ */
 @Entity
 @Data
 @Table(name = "BENEFICIO")

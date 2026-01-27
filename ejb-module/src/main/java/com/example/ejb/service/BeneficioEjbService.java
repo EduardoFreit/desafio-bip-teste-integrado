@@ -16,6 +16,10 @@ import jakarta.persistence.OptimisticLockException;
 import jakarta.persistence.PersistenceContext;
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * Serviço EJB para operações relacionadas a Benefício.
+ * @author lepf9
+ */
 @Stateless
 @Slf4j
 @TransactionAttribute(TransactionAttributeType.REQUIRED)

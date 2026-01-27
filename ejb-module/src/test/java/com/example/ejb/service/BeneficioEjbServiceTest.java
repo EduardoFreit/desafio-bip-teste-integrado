@@ -26,6 +26,10 @@ import com.example.ejb.model.Beneficio;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.LockModeType;
 
+/**
+ * Testes unitários para o serviço BeneficioEjbService.
+ * @author lepf9
+ */
 @ExtendWith(MockitoExtension.class)
 @DisplayName("BeneficioEjbService - Testes Unitários")
 class BeneficioEjbServiceTest {

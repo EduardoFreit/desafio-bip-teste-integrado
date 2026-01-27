@@ -11,7 +11,7 @@ import com.example.backend.dto.TransferenciaRequest;
 
 /**
  *
- * Serviço para operações relacionadas a Benefício
+ * Interface de serviço para operações relacionadas a Benefício
  * @author lepf9
  */
 public interface IBeneficioService {
