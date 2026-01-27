@@ -18,7 +18,7 @@ Este projeto utiliza Maven como gerenciador de dependências e build. O arquivo 
 1. Java 17+ e Maven instalados.
 2. Compile todos os módulos:
    ```sh
-   mvn clean package
+   mvn clean install
    ```
 3. Suba o backend Spring Boot:
    ```sh
