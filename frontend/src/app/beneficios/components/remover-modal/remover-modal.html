@@ -1,0 +1,24 @@
+<ng-template #content let-modal>
+	<div class="modal-header">
+        <h4 class="modal-title" id="modal-title">Remover Benefício</h4>
+        <button
+            type="button"
+            class="btn-close"
+            aria-describedby="modal-title"
+            (click)="modal.dismiss('Cross click')"
+        ></button>
+    </div>
+    <div class="modal-body">
+        <p>
+            <strong>Tem certeza que deseja remover o benefício <span class="text-primary">"{{beneficioDeletar.nome}}"</span>?</strong>
+        </p>
+        <p>
+            Todas as informações associadas a este benefício serão permanentemente removidas.
+            <span class="text-danger">Esta operação não pode ser desfeita.</span>
+        </p>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-outline-secondary" (click)="modal.dismiss()">Cancelar</button>
+        <button type="button" class="btn btn-danger" (click)="remover()">Remover</button>
+    </div>
+</ng-template>

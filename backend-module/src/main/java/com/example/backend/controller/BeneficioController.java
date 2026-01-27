@@ -71,7 +71,7 @@ public class BeneficioController {
         return ResponseEntity.ok(page);
     }
 
-    @GetMapping("/listar-todos")
+    @GetMapping(path="/listar-todos", produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Listar todos os benefícios", description = "Retorna uma lista com todos os benefícios cadastrados no sistema.")
     public ResponseEntity<List<BeneficioDTO>> listarTodos() {
         

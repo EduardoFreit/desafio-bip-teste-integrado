@@ -65,6 +65,14 @@ O projeto utiliza diferentes frameworks e bibliotecas para garantir a qualidade 
    - Mockito
    - AssertJ
 
+
+- **Frontend (Angular):**
+   - Jasmine
+   - Karma
+   - TestBed (Angular Testing Utilities)
+   - @angular/core/testing
+   - ngx-toastr (para testes de notificações)
+
 - **EJB Module:**
    - JUnit 5 (Jupiter)
    - Mockito

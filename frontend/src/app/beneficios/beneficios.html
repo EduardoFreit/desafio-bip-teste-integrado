@@ -27,7 +27,7 @@
 			</tr>
 		</thead>
 		<tbody>
-			@for (beneficio of pageBeneficio.content; track beneficio.id) {
+			@for (beneficio of beneficios(); track beneficio.id) {
 			<tr>
 				<td>{{ beneficio.nome }}</td>
 				<td>{{ beneficio.descricao }}</td>
@@ -40,7 +40,7 @@
 							placement="top" ngbTooltip="Editar Benefício">
 						<i class="bi bi-pen"></i>
 					</button>
-					<button class="btn btn-danger btn-sm me-2" (click)="deletarBeneficio(beneficio.id!)"
+					<button class="btn btn-danger btn-sm me-2" (click)="abrirModalRemoverBeneficio(beneficio)"
 							placement="top" ngbTooltip="Deletar Benefício">
 						<i class="bi bi-trash"></i>
 					</button>
@@ -60,9 +60,9 @@
 
 	<div class="d-flex justify-content-between p-2">
 		<ngb-pagination 
-			[collectionSize]="collectionSize" 
+			[collectionSize]="collectionSize()" 
 			[(page)]="page"
-			[pageSize]="pageSize" 
+			[pageSize]="pageSize()" 
 			(pageChange)="recarregarBeneficios()">
 		</ngb-pagination>
 
@@ -73,7 +73,9 @@
 			<option [ngValue]="25">25 items por página</option>
 		</select>
 	</div>
+	<!-- Modals -->
 	<app-criar-modal (cadastrado)="criarBeneficio($event)"></app-criar-modal>
 	<app-editar-modal (editado)="editarBeneficio($event)"></app-editar-modal>
 	<app-transferir-modal (transferido)="transferirBeneficio($event)"></app-transferir-modal>
+	<app-remover-modal (deletado)="deletarBeneficio($event)"></app-remover-modal>
 </div>

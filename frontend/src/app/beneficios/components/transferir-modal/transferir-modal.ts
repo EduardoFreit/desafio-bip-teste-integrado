@@ -22,23 +22,26 @@ export class TransferirModal {
   transferenciaRequest : TransferenciaRequest = { contaOrigemId: 0, contaDestinoId: 0, valor: 0.00 };
 
   beneficiosDestino?: Array<BeneficioDTO> = [];
-
-	open(transferir: TransferirRequestParams) {
-    this.transferenciaRequest = { ...transferir.transferenciaRequest };
-    this.beneficiosDestino = this.beneficiosDestino?.filter(b => b.id !== this.transferenciaRequest.contaOrigemId);
-		this.modalService.open(this.contentTemplate, { ariaLabelledBy: 'modal-basic-title' });
-	}
-
+  
   constructor(
     private beneficioApi: GerenciamentoDeBenefciosService
   ) {
-    this.listarBeneficiosDestino();
   }
 
-  listarBeneficiosDestino() {
-    this.beneficioApi.listarTodos().subscribe((resp: Array<BeneficioDTO>) => {
-      this.beneficiosDestino = resp;
+  open(transferir: TransferirRequestParams) {
+    this.beneficioApi.listarTodos().subscribe({
+      next: (beneficios: Array<BeneficioDTO>) => {
+        console.log(beneficios);
+        this.beneficiosDestino = Array.isArray(beneficios) ? beneficios : [];
+        this.transferenciaRequest = { ...transferir.transferenciaRequest };
+        this.beneficiosDestino = (this.beneficiosDestino || []).filter(b => b.id !== this.transferenciaRequest.contaOrigemId);
+        this.modalService.open(this.contentTemplate, { ariaLabelledBy: 'modal-basic-title' });
+      },
+      error: (error) => {
+        console.error('Erro ao listar benefícios para transferência:', error);
+      }
     });
+    
   }
 
   transferir() {
