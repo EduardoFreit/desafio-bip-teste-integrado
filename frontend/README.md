@@ -1,59 +1,66 @@
-# Frontend
+# Frontend Angular - Desafio BIP
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 21.1.1.
+Este projeto é o frontend do desafio BIP, desenvolvido em Angular. Ele consome APIs REST e oferece uma interface para a gestão dos benefícios.
 
-## Development server
+## Pré-requisitos
 
-To start a local development server, run:
+- Node.js (recomendado: versão 18.x ou superior)
+- npm (instalado junto com o Node.js)
+- Angular CLI (global):
+  ```sh
+  npm install -g @angular/cli
+  ```
 
-```bash
-ng serve
-```
+## Instalação
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+1. Clone o repositório (caso ainda não tenha feito):
+   ```sh
+   git clone <url-do-repositorio>
+   ```
+2. Acesse a pasta do frontend:
+   ```sh
+   cd frontend
+   ```
+3. Instale as dependências:
+   ```sh
+   npm install
+   ```
 
-## Code scaffolding
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+## Como rodar o projeto
 
-```bash
-ng generate component component-name
-```
+1. Certifique-se de que o backend-module (API) está rodando. Execute o comando correspondente na raiz do projeto backend (exemplo: `mvn spring-boot:run` ou `mvn clean package && java -jar ...`).
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+2. Gere as interfaces TypeScript dos serviços a partir do contrato OpenAPI do backend:
+   ```sh
+   npm run generate-api
+   ```
+   O comando `npm run generate-api` utiliza o arquivo de especificação OpenAPI do backend para gerar automaticamente os serviços e modelos TypeScript em `src/app/api`. Isso garante que o frontend esteja sempre sincronizado com a API backend, evitando erros de tipagem e facilitando a integração.
 
-```bash
-ng generate --help
-```
+3. Inicie o servidor de desenvolvimento Angular:
+   ```sh
+   npm run start
+   ```
 
-## Building
+Acesse: http://localhost:4200
 
-To build the project run:
+## Estrutura de Pastas
 
-```bash
-ng build
-```
+- `src/app/` - Código-fonte dos componentes, serviços e módulos Angular
+- `src/assets/` - Imagens e outros arquivos estáticos
+- `src/environments/` - Configurações de ambiente
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
+## Scripts úteis
 
-## Running unit tests
+- `npm start` - Inicia o servidor de desenvolvimento
+- `npm run build` - Builda o projeto para produção
+- `npm run generate-api ` - Gera automaticamente os serviços e modelos TypeScript a partir do back
 
-To execute unit tests with the [Vitest](https://vitest.dev/) test runner, use the following command:
+## Observações
 
-```bash
-ng test
-```
+- Certifique-se de que a API backend esteja rodando antes de utilizar o frontend.
+- Para customizações, edite os arquivos em `src/app/`.
 
-## Running end-to-end tests
+## Contato
 
-For end-to-end (e2e) testing, run:
-
-```bash
-ng e2e
-```
-
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+Dúvidas ou sugestões? Entre em contato com o responsável pelo projeto.

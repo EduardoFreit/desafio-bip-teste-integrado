@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -24,6 +25,8 @@ import com.example.backend.exception.BackendException;
 import com.example.backend.service.interfaces.IBeneficioService;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
@@ -46,7 +49,7 @@ public class BeneficioController {
         this.beneficioService = beneficioService;
     }
 
-    @GetMapping("/listar")
+    @GetMapping(value = "/listar", produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Listar benefícios", description = "Retorna uma lista com os benefícios cadastrados no sistema.")
     public ResponseEntity<Page<BeneficioDTO>> listar(
         @RequestParam(required = false, name="nome") String nome,
@@ -68,7 +71,7 @@ public class BeneficioController {
         return ResponseEntity.ok(page);
     }
 
-    @PostMapping
+    @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Criar benefício", description = "Cria um novo benefício no sistema.")
     public ResponseEntity<BeneficioDTO> criar(@RequestBody BeneficioDTO dto, UriComponentsBuilder uriBuilder) {
         
@@ -82,7 +85,7 @@ public class BeneficioController {
         return ResponseEntity.created(uri).body(created);
     }
 
-    @GetMapping("/{id}")
+    @GetMapping(path="/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Buscar benefício por ID", description = "Retorna os dados de um benefício específico pelo seu ID.")
     public ResponseEntity<BeneficioDTO> buscarPorId(@NotNull @PathVariable("id") Long id) {
         
@@ -95,7 +98,7 @@ public class BeneficioController {
         return ResponseEntity.ok(dto);
     }
 
-    @PutMapping("/{id}")
+    @PutMapping(path="/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Atualizar benefício", description = "Atualiza os dados de um benefício existente.")
     public ResponseEntity<BeneficioDTO> atualizar(@NotNull @PathVariable("id") Long id, @Valid @RequestBody BeneficioDTO dto) {
         
@@ -108,7 +111,7 @@ public class BeneficioController {
         return ResponseEntity.ok(updated);
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping(path="/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Deletar benefício", description = "Deleta um benefício existente pelo seu ID.")
     public ResponseEntity<Void> deletar(@NotNull @PathVariable("id") Long id) {
 
@@ -121,9 +124,9 @@ public class BeneficioController {
         return ResponseEntity.noContent().build();
     }
 
-    @PostMapping("/transferir")
+    @PostMapping(path="/transferir", produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Transferir valor entre benefícios", description = "Realiza a transferência de valor entre dois benefícios.")
-    public ResponseEntity<Void> transferir(@ParameterObject @RequestBody TransferenciaRequest request) {
+    public ResponseEntity<Void> transferir(@RequestBody TransferenciaRequest request) {
         try {
 
             MDC.put("tag", "TRANSFERENCIA");

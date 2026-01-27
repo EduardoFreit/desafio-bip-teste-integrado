@@ -1,0 +1,29 @@
+<ng-template #content let-modal>
+    <div class="modal-header">
+        <h4 class="modal-title" id="modal-basic-title">Transferir Valor</h4>
+        <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+    </div>
+    <div class="modal-body">
+        <form>
+            <div class="mb-3">
+                <label for="valor">Valor<span class="text-danger">*</span></label>
+                <div class="input-group">
+                    <input id="valor" required [(ngModel)]="tranferirObjeto.valor" type="number" step="0.01"
+                        class="form-control" placeholder="Digite o valor do benefício" name="valor" />
+                </div>
+            </div>
+            <div class="mb-3">
+                <label for="contaDestinoId">Conta Destino<span class="text-danger">*</span></label>
+                <div class="input-group">
+                    <select [(ngModel)]="tranferirObjeto.contaDestinoId" name="contaDestinoId" class="form-control">
+                        <option value="0" selected disabled>Selecione uma Conta Destino</option>
+                        <option *ngFor="let beneficio of beneficiosDestino" [value]="beneficio.id">{{ beneficio.nome }}</option>
+                    </select>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-outline-secondary" (click)="transferir()">Transferir Valor</button>
+    </div>
+</ng-template>

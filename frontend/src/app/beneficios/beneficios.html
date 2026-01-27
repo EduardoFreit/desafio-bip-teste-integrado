@@ -1,0 +1,64 @@
+<div class="p-2">
+	<h1 class="mb-5">Lista de Benefícios</h1>
+	<button class="btn btn-primary" (click)="abrirModalCriarBeneficio()">Novo Benefício</button>
+	<table class="table table-striped">
+		<thead>
+			<tr>
+				<th scope="col" sortable="nome" (sort)="onSort($event)">Nome</th>
+				<th scope="col" sortable="descricao" (sort)="onSort($event)">Descrição</th>
+				<th scope="col" sortable="valor" (sort)="onSort($event)">Valor</th>
+				<th scope="col" sortable="ativo" (sort)="onSort($event)">Ativo</th>
+				<th scope="col">Ações</th>
+			</tr>
+		</thead>
+		<tbody>
+			@for (beneficio of pageBeneficio.content; track beneficio.id) {
+			<tr>
+				<td>{{ beneficio.nome }}</td>
+				<td>{{ beneficio.descricao }}</td>
+				<td>{{ beneficio.valor | currency:'BRL' }}</td>
+				<td>
+					<i [class]="beneficio.ativo ? 'bi bi-check-circle-fill text-success' : 'bi bi-x-circle-fill text-danger'"></i>
+				</td>
+				<td>
+					<button class="btn btn-primary btn-sm me-2" (click)="abrirModalEditarBeneficio(beneficio)"
+							placement="top" ngbTooltip="Editar Benefício">
+						<i class="bi bi-pen"></i>
+					</button>
+					<button class="btn btn-danger btn-sm me-2" (click)="deletarBeneficio(beneficio.id!)"
+							placement="top" ngbTooltip="Deletar Benefício">
+						<i class="bi bi-trash"></i>
+					</button>
+					<button class="btn btn btn-secondary btn-sm" (click)="abrirModalTransferirBeneficio(beneficio)"
+							placement="top" ngbTooltip="Realizar Transferência">
+						<i class="bi bi-arrow-left-right"></i>
+					</button>
+				</td>
+			</tr>
+			} @empty {
+			<tr>
+				<td colspan="6" style="text-align: center">Nenhum Benefício Encontrado</td>
+			</tr>
+			}
+		</tbody>
+	</table>
+
+	<div class="d-flex justify-content-between p-2">
+		<ngb-pagination 
+			[collectionSize]="collectionSize" 
+			[(page)]="page"
+			[pageSize]="pageSize" 
+			(pageChange)="recarregarBeneficios()">
+		</ngb-pagination>
+
+		<select class="form-select" style="width: auto" [(ngModel)]="pageSize"
+			(ngModelChange)="recarregarBeneficios()">
+			<option [ngValue]="5">5 items por página</option>
+			<option [ngValue]="10">10 items por página</option>
+			<option [ngValue]="25">25 items por página</option>
+		</select>
+	</div>
+	<app-criar-modal (cadastrado)="criarBeneficio($event)"></app-criar-modal>
+	<app-editar-modal (editado)="editarBeneficio($event)"></app-editar-modal>
+	<app-transferir-modal (transferido)="transferirBeneficio($event)"></app-transferir-modal>
+</div>
