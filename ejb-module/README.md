@@ -38,8 +38,7 @@ Este módulo implementa a lógica de negócios utilizando Enterprise JavaBeans (
 
 ## Observações
 
-- Certifique-se de que o servidor de aplicação está configurado corretamente para aceitar EJBs.
-- Este módulo pode ser consumido por outros módulos Java EE ou aplicações externas.
+- Este módulo pode ser utilizado por outros módulos Java EE ou aplicações externas.
 
 ## Contato
 

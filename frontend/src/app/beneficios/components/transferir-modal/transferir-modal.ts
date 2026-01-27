@@ -19,13 +19,13 @@ export class TransferirModal {
 
   @Output() transferido = new EventEmitter<TransferirRequestParams>();
 
-  tranferirObjeto : TransferenciaRequest = { contaOrigemId: 0, contaDestinoId: 0, valor: 0.00 };
+  transferenciaRequest : TransferenciaRequest = { contaOrigemId: 0, contaDestinoId: 0, valor: 0.00 };
 
   beneficiosDestino?: Array<BeneficioDTO> = [];
 
-	open(tranferir: TransferirRequestParams) {
-    this.tranferirObjeto = { ...tranferir.transferenciaRequest };
-    this.beneficiosDestino = this.beneficiosDestino?.filter(b => b.id !== this.tranferirObjeto.contaOrigemId);
+	open(transferir: TransferirRequestParams) {
+    this.transferenciaRequest = { ...transferir.transferenciaRequest };
+    this.beneficiosDestino = this.beneficiosDestino?.filter(b => b.id !== this.transferenciaRequest.contaOrigemId);
 		this.modalService.open(this.contentTemplate, { ariaLabelledBy: 'modal-basic-title' });
 	}
 
@@ -42,7 +42,7 @@ export class TransferirModal {
   }
 
   transferir() {
-    let transferirRequest: TransferirRequestParams = { transferenciaRequest: this.tranferirObjeto };
+    let transferirRequest: TransferirRequestParams = { transferenciaRequest: this.transferenciaRequest };
     this.transferido.emit(transferirRequest);
   }
 

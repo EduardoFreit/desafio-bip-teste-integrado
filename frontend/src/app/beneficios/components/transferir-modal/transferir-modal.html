@@ -8,14 +8,14 @@
             <div class="mb-3">
                 <label for="valor">Valor<span class="text-danger">*</span></label>
                 <div class="input-group">
-                    <input id="valor" required [(ngModel)]="tranferirObjeto.valor" type="number" step="0.01"
+                    <input id="valor" required [(ngModel)]="transferenciaRequest.valor" type="number" step="0.01"
                         class="form-control" placeholder="Digite o valor do benefício" name="valor" />
                 </div>
             </div>
             <div class="mb-3">
                 <label for="contaDestinoId">Conta Destino<span class="text-danger">*</span></label>
                 <div class="input-group">
-                    <select [(ngModel)]="tranferirObjeto.contaDestinoId" name="contaDestinoId" class="form-control">
+                    <select [(ngModel)]="transferenciaRequest.contaDestinoId" name="contaDestinoId" class="form-control">
                         <option value="0" selected disabled>Selecione uma Conta Destino</option>
                         <option *ngFor="let beneficio of beneficiosDestino" [value]="beneficio.id">{{ beneficio.nome }}</option>
                     </select>

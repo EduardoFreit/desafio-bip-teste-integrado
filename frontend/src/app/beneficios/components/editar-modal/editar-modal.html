@@ -11,7 +11,7 @@
 					<input
                         id="nome"
                         required
-                        [(ngModel)]="beneficioEditar.nome"
+                        [(ngModel)]="beneficioEdicao.nome"
                         maxlength="100"
 						class="form-control"
 						placeholder="Digite o nome do benefício"
@@ -26,7 +26,7 @@
                         id="descricao"
                         required
                         maxlength="255"
-                        [(ngModel)]="beneficioEditar.descricao"
+                        [(ngModel)]="beneficioEdicao.descricao"
                         class="form-control"
                         placeholder="Digite a descrição do benefício"
                         name="descricao"
@@ -39,7 +39,7 @@
                     class="form-check-input"
                     type="checkbox"
                     name="ativo"
-                    [(ngModel)]="beneficioEditar.ativo"
+                    [(ngModel)]="beneficioEdicao.ativo"
                 />
                 <label class="form-check-label" for="ativo">
                     Ativo
