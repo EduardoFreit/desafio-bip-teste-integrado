@@ -1,5 +1,7 @@
 package com.example.backend.controller;
 
+import java.util.List;
+
 import org.slf4j.MDC;
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
@@ -69,6 +71,19 @@ public class BeneficioController {
         log.info("Benefícios listados com sucesso, total de elementos: {}", page.getTotalElements());
 
         return ResponseEntity.ok(page);
+    }
+
+    @GetMapping("/listar-todos")
+    @Operation(summary = "Listar todos os benefícios", description = "Retorna uma lista com todos os benefícios cadastrados no sistema.")
+    public ResponseEntity<List<BeneficioDTO>> listarTodos() {
+        
+        log.info("Listando todos os benefícios");
+
+        List<BeneficioDTO> beneficios = beneficioService.listarTodos();
+        
+        log.info("Todos os benefícios listados com sucesso");
+
+        return ResponseEntity.ok(beneficios);
     }
 
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)

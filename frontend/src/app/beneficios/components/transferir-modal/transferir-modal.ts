@@ -36,14 +36,9 @@ export class TransferirModal {
   }
 
   listarBeneficiosDestino() {
-    let filtroBeneficio : ListarRequestParams = {
-        page: 0,
-        size: 10000,
-        sort: ['nome,asc']
-      };
-      this.beneficioApi.listar(filtroBeneficio).subscribe((resp: PageBeneficioDTO) => {
-        this.beneficiosDestino = resp.content;
-      });
+    this.beneficioApi.listarTodos().subscribe((resp: Array<BeneficioDTO>) => {
+      this.beneficiosDestino = resp;
+    });
   }
 
   transferir() {

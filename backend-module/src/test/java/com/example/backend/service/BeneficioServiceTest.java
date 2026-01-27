@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -64,9 +65,8 @@ public class BeneficioServiceTest {
     @Test
     @DisplayName("Deve listar todos beneficios")
     public void listarBeneficiosTest() {
-        Pageable pageable = Pageable.unpaged();
-        Page<BeneficioDTO> beneficiosPage = beneficioService.listar(pageable, null, null);
-        assertEquals(3, beneficiosPage.getTotalElements());
+        List<BeneficioDTO> beneficioDTOs = beneficioService.listarTodos();
+        assertEquals(3, beneficioDTOs.size());
     }
 
     @Test

@@ -1,5 +1,7 @@
 package com.example.backend.service;
 
+import java.util.List;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -16,6 +18,7 @@ import com.example.backend.specification.BeneficioSpec;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 
 import com.example.backend.enuns.BackEndExceptionEnum;
@@ -63,6 +66,20 @@ public class BeneficioService implements IBeneficioService {
         } catch (Exception e) {
             log.error("Erro ao listar benefícios: {}", e.getMessage());
             throw new BackendException("Erro ao listar benefícios", BackEndExceptionEnum.ERRO_AO_LISTAR_BENEFICIOS);
+        }
+    }
+
+    @Override
+    public List<BeneficioDTO> listarTodos() {
+        try {
+            Sort sort = Sort.by(Sort.Direction.ASC, "nome");
+            List<Beneficio> beneficios = beneficioRepository.findAll(sort);
+            return beneficios.stream()
+                    .map(beneficioMapper::beneficioParaBeneficioDTO)
+                    .collect(Collectors.toList());
+        } catch (Exception e) {
+            log.error("Erro ao listar todos os benefícios: {}", e.getMessage());
+            throw new BackendException("Erro ao listar todos os benefícios", BackEndExceptionEnum.ERRO_AO_LISTAR_BENEFICIOS);
         }
     }
 
