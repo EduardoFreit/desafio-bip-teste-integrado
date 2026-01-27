@@ -9,6 +9,7 @@ import { CriarModal } from './components/criar-modal/criar-modal';
 import { EditarModal } from './components/editar-modal/editar-modal';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap/modal';
 import { TransferirModal } from './components/transferir-modal/transferir-modal';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-beneficios',
@@ -28,7 +29,8 @@ export class Beneficios {
   constructor(
     private beneficioApi: GerenciamentoDeBenefciosService, 
     private cdr: ChangeDetectorRef,
-    private modalService: NgbModal
+    private modalService: NgbModal,
+    private toastr: ToastrService
   ) {
   }
 
@@ -41,6 +43,7 @@ export class Beneficios {
   pageSize: number = 5;
   sortColumn: string = 'nome';
   sortDirection: string = 'asc';
+  filtroNome: string = '';
 
   ngOnInit() {
     this.recarregarBeneficios();
@@ -50,7 +53,8 @@ export class Beneficios {
     let filtroBeneficio : ListarRequestParams = {
       page: this.page - 1,
       size: this.pageSize,
-      sort: [`${this.sortColumn},${this.sortDirection}`]
+      sort: [`${this.sortColumn},${this.sortDirection}`],
+      nome: this.filtroNome
     };
     this.beneficioApi.listar(filtroBeneficio).subscribe((resp: PageBeneficioDTO) => {
       this.pageBeneficio = {};
@@ -59,6 +63,8 @@ export class Beneficios {
       this.page = (resp.number || 0) + 1;
       this.pageSize = resp.size || 5;
       this.cdr.detectChanges();
+    }, error => {
+      this.toastr.error(error.error.message, 'Erro');
     });
   }
 
@@ -81,6 +87,9 @@ export class Beneficios {
     let deletarRequestParams : DeletarRequestParams = { id };
     this.beneficioApi.deletar(deletarRequestParams).subscribe(() => {
       this.recarregarBeneficios();
+      this.toastr.success('Benefício deletado com sucesso!', 'Sucesso');
+    }, error => {
+      this.toastr.error(error.error.message, 'Erro');
     });
   }
 
@@ -90,10 +99,12 @@ export class Beneficios {
 
   criarBeneficio (beneficio: BeneficioDTO) {
     let criarRequestParams : CriarRequestParams = { beneficioDTO: beneficio };
-    console.log(criarRequestParams);
     this.beneficioApi.criar(criarRequestParams).subscribe(() => {
       this.recarregarBeneficios();
       this.modalService.dismissAll();
+      this.toastr.success('Benefício criado com sucesso!', 'Sucesso');
+    }, error => {
+      this.toastr.error(error.error.message, 'Erro');
     });
   }
 
@@ -106,6 +117,9 @@ export class Beneficios {
     this.beneficioApi.atualizar(criarRequestParams).subscribe(() => {
       this.recarregarBeneficios();
       this.modalService.dismissAll();
+      this.toastr.success('Benefício atualizado com sucesso!', 'Sucesso');
+    }, error => {
+      this.toastr.error(error.error.message, 'Erro');
     });
   }
 
@@ -116,10 +130,17 @@ export class Beneficios {
   }
 
   transferirBeneficio (transferirRequestParams: TransferirRequestParams) {
-    console.log(transferirRequestParams);
     this.beneficioApi.transferir(transferirRequestParams).subscribe(() => {
       this.recarregarBeneficios();
       this.modalService.dismissAll();
+      this.toastr.success('Saldo transferido com sucesso!', 'Sucesso');
+    }, error => {
+      this.toastr.error(error.error.message, 'Erro');
     });
+  }
+
+  limparFiltro() {
+    this.filtroNome = '';
+    this.recarregarBeneficios();
   }
 }

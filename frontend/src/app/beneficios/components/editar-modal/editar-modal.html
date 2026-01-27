@@ -12,6 +12,7 @@
                         id="nome"
                         required
                         [(ngModel)]="beneficioEditar.nome"
+                        maxlength="100"
 						class="form-control"
 						placeholder="Digite o nome do benefício"
 						name="nome"
@@ -24,6 +25,7 @@
                     <input
                         id="descricao"
                         required
+                        maxlength="255"
                         [(ngModel)]="beneficioEditar.descricao"
                         class="form-control"
                         placeholder="Digite a descrição do benefício"

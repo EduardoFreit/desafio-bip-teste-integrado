@@ -9,6 +9,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import jakarta.persistence.Version;
+import jakarta.validation.constraints.DecimalMax;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PositiveOrZero;
 import jakarta.validation.constraints.Size;
@@ -34,6 +35,7 @@ public class Beneficio {
     @NotNull(message="Valor do benefício é obrigatório")
     @PositiveOrZero(message="O valor do benefício deve ser positivo ou zero")
     @Column(nullable = false, precision = 15, scale = 2)
+    @DecimalMax(value = "999999999999999.99", message = "O valor do benefício não pode exceder 999.999.999.999.999.99")
     private BigDecimal valor;
 
     @Column(nullable = false)
