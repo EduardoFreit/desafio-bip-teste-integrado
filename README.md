@@ -1,18 +1,3 @@
-## Tecnologias dos Testes Unitários
-
-O projeto utiliza diferentes frameworks e bibliotecas para garantir a qualidade do código em cada módulo:
-
-- **Backend (Spring Boot):**
-   - JUnit 5 (Jupiter)
-   - Spring Boot Test
-   - Mockito
-   - AssertJ
-
-- **EJB Module:**
-   - JUnit 5 (Jupiter)
-   - Mockito
-
-Os testes cobrem cenários de sucesso e falha, incluindo integração, exceções e validação de regras de negócio.
 # Desafio Fullstack Integrado
 
 Este repositório contém um projeto multi-módulo Java, integrando EJB e um backend Spring Boot (API REST), além do frontend Angular.
@@ -49,6 +34,22 @@ Este projeto utiliza Maven como gerenciador de dependências e build. O arquivo 
   - http://localhost:8080/backend-module/h2-console
 
   Use as credenciais e JDBC URL configurados em `application-prd.properties`.
+
+## Tecnologias dos Testes Unitários
+
+O projeto utiliza diferentes frameworks e bibliotecas para garantir a qualidade do código em cada módulo:
+
+- **Backend (Spring Boot):**
+   - JUnit 5 (Jupiter)
+   - Spring Boot Test
+   - Mockito
+   - AssertJ
+
+- **EJB Module:**
+   - JUnit 5 (Jupiter)
+   - Mockito
+
+Os testes cobrem cenários de sucesso e falha, incluindo integração, exceções e validação de regras de negócio.
 
 ## Observações
 
