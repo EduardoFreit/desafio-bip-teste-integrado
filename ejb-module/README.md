@@ -2,7 +2,8 @@
 
 Este módulo implementa a lógica de negócios utilizando Enterprise JavaBeans (EJB) para o desafio BIP. Ele pode ser utilizado em conjunto com o backend principal para fornecer serviços distribuídos, em particular transferência de valores entre contas/benefícios.
 
-Para garantir a integridade das operações de transferência e evitar condições de corrida, foi adotado o controle de concorrência via optimistic locking (bloqueio otimista) nas entidades. Assim, se duas transações tentarem alterar o mesmo benefício simultaneamente, apenas a primeira será efetivada e as demais receberão uma exceção, garantindo consistência dos dados.
+Para garantir a integridade das transferências e evitar inconsistências causadas por acessos simultâneos, foi implementado controle de concorrência na camada EJB.
+A conta/benificio de origem é protegida com bloqueio pessimista durante a operação, assegurando que apenas uma transação possa efetuar o débito por vez. Caso outra transação tente acessar o mesmo registro no mesmo momento, ela será bloqueada ou falhará, conforme a política do banco de dados, mantendo a consistência dos saldos.
 
 ## Pré-requisitos
 

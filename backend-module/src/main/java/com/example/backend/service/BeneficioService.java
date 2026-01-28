@@ -33,6 +33,7 @@ import com.example.ejb.model.Beneficio;
 import com.example.ejb.service.BeneficioEjbService;
 
 import jakarta.persistence.OptimisticLockException;
+import jakarta.persistence.PessimisticLockException;
 import jakarta.transaction.Transactional;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validator;
@@ -154,7 +155,7 @@ public class BeneficioService implements IBeneficioService {
 
     @Override
     @Retryable(
-        retryFor = { OptimisticLockException.class },
+        retryFor = { OptimisticLockException.class, PessimisticLockException.class },
         maxAttempts = 3,
         backoff = @Backoff(delay = 100)
     )
@@ -177,7 +178,10 @@ public class BeneficioService implements IBeneficioService {
             log.error("Conta não encontrada na transferência: {}", e.getMessage());
             throw new BackendException(e.getMessage(), HttpStatus.NOT_FOUND, BackEndExceptionEnum.ERRO_AO_TRANSFERIR_CONTA_NAO_ENCONTRADA);
         } catch (OptimisticLockException e) {
-            log.error("Conflito de versão na transferência: {}", e.getMessage());
+            log.error(" [OPTIMISTIC] Conflito de versão na transferência: {}", e.getMessage());
+            throw e;
+        } catch (PessimisticLockException e) {
+            log.error(" [PESSIMISTIC] Conflito de bloqueio na transferência: {}", e.getMessage());
             throw e;
         } catch (Exception e) {
             log.error("Erro ao realizar transferência: {}", e.getMessage());

@@ -14,6 +14,7 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.LockModeType;
 import jakarta.persistence.OptimisticLockException;
 import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.PessimisticLockException;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -35,8 +36,8 @@ public class BeneficioEjbService {
 
             validacaoInicialTransferir(contaOrigemId, contaDestinoId, valor);
 
-            Beneficio origem = em.find(Beneficio.class, contaOrigemId, LockModeType.OPTIMISTIC);
-            Beneficio destino = em.find(Beneficio.class, contaDestinoId, LockModeType.OPTIMISTIC);
+            Beneficio origem = em.find(Beneficio.class, contaOrigemId, LockModeType.PESSIMISTIC_WRITE);
+            Beneficio destino = em.find(Beneficio.class, contaDestinoId, LockModeType.PESSIMISTIC_WRITE);
             
             validacaoFinalTransferir(origem, destino, valor, contaOrigemId, contaDestinoId);
             
@@ -48,8 +49,12 @@ public class BeneficioEjbService {
             log.info("Transferência realizada com sucesso: origemId={}, destinoId={}, valor={}, " +
                         "novoSaldoOrigem={}, novoSaldoDestino={}", 
                         contaOrigemId, contaDestinoId, valor, origem.getValor(), destino.getValor());
+        }  catch (PessimisticLockException e) {
+            log.warn(" [PESSIMISTIC] Conflito de bloqueio detectado na transferência", e);
+            throw e;
+    
         } catch (OptimisticLockException e) {
-            log.warn("Conflito de versão detectado na transferência", e);
+            log.warn(" [OPTIMISTIC] Conflito de versão detectado na transferência", e);
             throw e;
         }
     }
