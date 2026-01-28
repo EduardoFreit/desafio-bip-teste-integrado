@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import com.example.backend.dto.FalhaBackendResponse;
+import com.example.backend.enuns.BackEndExceptionEnum;
 import com.example.backend.exception.BackendException;
 
 import jakarta.persistence.OptimisticLockException;
