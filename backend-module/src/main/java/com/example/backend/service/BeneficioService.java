@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import com.example.backend.dto.BeneficioDTO;
 import com.example.backend.dto.TransferenciaRequest;
 import com.example.backend.exception.BackendException;
+import com.example.backend.exception.ValidacaoException;
 import com.example.backend.mapper.interfaces.IBeneficioMapper;
 import com.example.backend.repository.BeneficioRepository;
 import com.example.backend.service.interfaces.IBeneficioService;
@@ -97,8 +98,8 @@ public class BeneficioService implements IBeneficioService {
             Beneficio beneficioSalvar = beneficioRepository.save(beneficioCriar);
 
             return beneficioMapper.beneficioParaBeneficioDTO(beneficioSalvar);
-        } catch (BackendException e) {
-            throw e;
+        } catch (ValidacaoException e) {
+            throw new BackendException(e.getMessage(), HttpStatus.BAD_REQUEST, BackEndExceptionEnum.ERRO_AO_CRIAR_BENEFICIO);
         } catch (Exception e) {
             log.error("Erro ao criar benefício: {}", e.getMessage());
             throw new BackendException("Erro ao criar benefício", BackEndExceptionEnum.ERRO_AO_CRIAR_BENEFICIO);
@@ -130,6 +131,8 @@ public class BeneficioService implements IBeneficioService {
             Beneficio beneficioAtualizado = beneficioRepository.save(beneficioAtualizar);
 
             return beneficioMapper.beneficioParaBeneficioDTO(beneficioAtualizado);
+        } catch (ValidacaoException e) {
+            throw new BackendException(e.getMessage(), HttpStatus.BAD_REQUEST, BackEndExceptionEnum.ERRO_AO_ATUALIZAR_BENEFICIO);
         } catch (BackendException e) {
             throw e;
         } catch (Exception e) {
@@ -163,8 +166,8 @@ public class BeneficioService implements IBeneficioService {
         try {
             validarObjeto(request);
             beneficioEjbService.transferir(request.contaOrigemId(), request.contaDestinoId(), request.valor());
-        } catch (BackendException e) {
-            throw new BackendException(e.getMessage(), e.getStatus(), BackEndExceptionEnum.ERRO_AO_TRANSFERIR_ARGUMENTO_INVALIDO );
+        } catch (ValidacaoException e) {
+            throw new BackendException(e.getMessage(), HttpStatus.BAD_REQUEST, BackEndExceptionEnum.ERRO_AO_TRANSFERIR_ARGUMENTO_INVALIDO);
         } catch (IllegalArgumentException e) {
             log.error("Argumento inválido na transferência: {}", e.getMessage());
             throw new BackendException(e.getMessage(), HttpStatus.BAD_REQUEST, BackEndExceptionEnum.ERRO_AO_TRANSFERIR_ARGUMENTO_INVALIDO);
@@ -196,13 +199,13 @@ public class BeneficioService implements IBeneficioService {
      * @param objeto Objeto a ser validado.
      * @throws BackendException se houver violações de restrições.
      */
-    private <T> void validarObjeto(T objeto) {
+    private <T> void validarObjeto(T objeto) throws ValidacaoException {
         Set<ConstraintViolation<T>> violations = validator.validate(objeto);
         if (!violations.isEmpty()) {
             String mensagens = violations.stream()
                     .map(ConstraintViolation::getMessage)
                     .collect(Collectors.joining(", "));
-            throw new BackendException(mensagens, HttpStatus.BAD_REQUEST);
+            throw new ValidacaoException(mensagens);
         }
     }
 
