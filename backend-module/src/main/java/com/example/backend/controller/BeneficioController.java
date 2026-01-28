@@ -86,7 +86,7 @@ public class BeneficioController {
 
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Criar benefício", description = "Cria um novo benefício no sistema.")
-    public ResponseEntity<BeneficioDTO> criar(@RequestBody BeneficioDTO dto, UriComponentsBuilder uriBuilder) {
+    public ResponseEntity<BeneficioDTO> criar(@RequestBody @NotNull BeneficioDTO dto, UriComponentsBuilder uriBuilder) {
         
         log.info("Criando benefício: {}", dto);
         
@@ -100,7 +100,7 @@ public class BeneficioController {
 
     @GetMapping(path="/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Buscar benefício por ID", description = "Retorna os dados de um benefício específico pelo seu ID.")
-    public ResponseEntity<BeneficioDTO> buscarPorId(@NotNull @PathVariable("id") Long id) {
+    public ResponseEntity<BeneficioDTO> buscarPorId(@PathVariable("id") @NotNull Long id) {
         
         log.info("Buscando benefício por ID: {}", id);
         
@@ -113,7 +113,7 @@ public class BeneficioController {
 
     @PutMapping(path="/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Atualizar benefício", description = "Atualiza os dados de um benefício existente.")
-    public ResponseEntity<BeneficioDTO> atualizar(@NotNull @PathVariable("id") Long id, @Valid @RequestBody BeneficioDTO dto) {
+    public ResponseEntity<BeneficioDTO> atualizar(@PathVariable("id") @NotNull Long id, @RequestBody @NotNull BeneficioDTO dto) {
         
         log.info("Atualizando benefício ID: {} com dados: {}", id, dto);
         
@@ -126,7 +126,7 @@ public class BeneficioController {
 
     @DeleteMapping(path="/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Deletar benefício", description = "Deleta um benefício existente pelo seu ID.")
-    public ResponseEntity<Void> deletar(@NotNull @PathVariable("id") Long id) {
+    public ResponseEntity<Void> deletar(@PathVariable("id") @NotNull Long id) {
 
         log.info("Deletando benefício por ID: {}", id);
 
@@ -139,7 +139,7 @@ public class BeneficioController {
 
     @PostMapping(path="/transferir", produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Transferir valor entre benefícios", description = "Realiza a transferência de valor entre dois benefícios.")
-    public ResponseEntity<Void> transferir(@RequestBody TransferenciaRequest request) {
+    public ResponseEntity<Void> transferir(@RequestBody @NotNull TransferenciaRequest request) {
         try {
 
             MDC.put("tag", "TRANSFERENCIA");
