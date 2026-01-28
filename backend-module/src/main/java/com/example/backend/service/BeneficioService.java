@@ -1,5 +1,6 @@
 package com.example.backend.service;
 
+import java.security.spec.ECField;
 import java.util.List;
 
 import org.springframework.data.domain.Page;
@@ -20,6 +21,9 @@ import java.util.stream.Collectors;
 
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
+import org.springframework.orm.ObjectOptimisticLockingFailureException;
+import org.springframework.retry.annotation.Backoff;
+import org.springframework.retry.annotation.Retryable;
 
 import com.example.backend.enuns.BackEndExceptionEnum;
 import com.example.ejb.exception.ContaInativaException;
@@ -149,6 +153,11 @@ public class BeneficioService implements IBeneficioService {
     }
 
     @Override
+    @Retryable(
+        retryFor = { OptimisticLockException.class },
+        maxAttempts = 3,
+        backoff = @Backoff(delay = 100)
+    )
     public void transferir(TransferenciaRequest request) {
         try {
             validarObjeto(request);
@@ -169,7 +178,7 @@ public class BeneficioService implements IBeneficioService {
             throw new BackendException(e.getMessage(), HttpStatus.NOT_FOUND, BackEndExceptionEnum.ERRO_AO_TRANSFERIR_CONTA_NAO_ENCONTRADA);
         } catch (OptimisticLockException e) {
             log.error("Conflito de versão na transferência: {}", e.getMessage());
-            throw new BackendException(e.getMessage(), HttpStatus.CONFLICT, BackEndExceptionEnum.ERRO_AO_TRANSFERIR_CONFLITO_VERSAO);
+            throw e;
         } catch (Exception e) {
             log.error("Erro ao realizar transferência: {}", e.getMessage());
             throw new BackendException("Erro ao realizar transferência", BackEndExceptionEnum.ERRO_AO_TRANSFERIR_VALOR_ENTRE_BENEFICIOS);
