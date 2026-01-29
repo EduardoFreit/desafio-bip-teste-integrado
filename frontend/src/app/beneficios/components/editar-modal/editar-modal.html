@@ -1,52 +1,33 @@
 <ng-template #content let-modal>
-	<div class="modal-header">
-		<h4 class="modal-title" id="modal-basic-title">Editar Benefício</h4>
-		<button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
-	</div>
-	<div class="modal-body">
-		<form>
-			<div class="mb-3">
-				<label for="nome">Nome<span class="text-danger">*</span></label>
-				<div class="input-group">
-					<input
-                        id="nome"
-                        required
-                        [(ngModel)]="beneficioEdicao().nome"
-                        maxlength="100"
-						class="form-control"
-						placeholder="Digite o nome do benefício"
-						name="nome"
-					/>
-				</div>
-			</div>
+    <div class="modal-header">
+        <h4 class="modal-title" id="modal-basic-title">Editar Benefício</h4>
+        <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+    </div>
+    <div class="modal-body">
+        <form>
+            <div class="mb-3">
+                <label for="nome">Nome<span class="text-danger">*</span></label>
+                <div class="input-group">
+                    <input id="nome" required [(ngModel)]="beneficioEdicao().nome" maxlength="100" class="form-control"
+                        placeholder="Digite o nome do benefício" name="nome" />
+                </div>
+            </div>
             <div class="mb-3">
                 <label for="descricao">Descrição</label>
                 <div class="input-group">
-                    <input
-                        id="descricao"
-                        required
-                        maxlength="255"
-                        [(ngModel)]="beneficioEdicao().descricao"
-                        class="form-control"
-                        placeholder="Digite a descrição do benefício"
-                        name="descricao"
-                    />
+                    <input id="descricao" required maxlength="255" [(ngModel)]="beneficioEdicao().descricao"
+                        class="form-control" placeholder="Digite a descrição do benefício" name="descricao" />
                 </div>
             </div>
             <div class="form-check mb-3">
-                <input
-                    id="ativo"
-                    class="form-check-input"
-                    type="checkbox"
-                    name="ativo"
-                    [(ngModel)]="beneficioEdicao().ativo"
-                />
+                <input id="ativo" class="form-check-input" type="checkbox" name="ativo"
+                    [(ngModel)]="beneficioEdicao().ativo" />
                 <label class="form-check-label" for="ativo">
                     Ativo
                 </label>
             </div>
-		</form>
-	</div>
+        </form>
+    </div>
     <div class="modal-footer">
         <button type="button" class="btn btn-outline-secondary" (click)="editar()">Editar Benefício</button>
     </div>

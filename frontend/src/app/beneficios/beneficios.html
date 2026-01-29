@@ -1,17 +1,12 @@
 <div class="p-2">
 	<h1 class="mb-5">Lista de Benefícios</h1>
-	
+
 	<button class="btn btn-primary mb-4" (click)="abrirModalCriarBeneficio()">Novo Benefício</button>
-	
+
 	<div class="w-50 mb-1">
 		<form class="d-flex" (ngSubmit)="recarregarBeneficios()">
-			<input
-				type="text"
-				class="form-control me-3"
-				placeholder="Buscar por nome"
-				[(ngModel)]="filtroNome"
-				name="filtroNome"
-			/>
+			<input type="text" class="form-control me-3" placeholder="Buscar por nome" [(ngModel)]="filtroNome"
+				name="filtroNome" />
 			<button type="submit" class="btn btn-outline-primary me-1">Buscar</button>
 			<button type="button" class="btn btn-outline-secondary" (click)="limparFiltro()">Limpar</button>
 		</form>
@@ -39,15 +34,15 @@
 				</td>
 				<td>
 					<button class="btn btn-primary btn-sm me-2" (click)="abrirModalEditarBeneficio(beneficio)"
-							placement="top" ngbTooltip="Editar Benefício">
+						placement="top" ngbTooltip="Editar Benefício">
 						<i class="bi bi-pen"></i>
 					</button>
 					<button class="btn btn-danger btn-sm me-2" (click)="abrirModalRemoverBeneficio(beneficio)"
-							placement="top" ngbTooltip="Deletar Benefício">
+						placement="top" ngbTooltip="Deletar Benefício">
 						<i class="bi bi-trash"></i>
 					</button>
 					<button class="btn btn btn-secondary btn-sm" (click)="abrirModalTransferirBeneficio(beneficio)"
-							placement="top" ngbTooltip="Realizar Transferência">
+						placement="top" ngbTooltip="Realizar Transferência">
 						<i class="bi bi-arrow-left-right"></i>
 					</button>
 				</td>
@@ -61,15 +56,11 @@
 	</table>
 
 	<div class="d-flex justify-content-between p-2">
-		<ngb-pagination 
-			[collectionSize]="collectionSize()" 
-			[(page)]="page"
-			[pageSize]="pageSize()" 
+		<ngb-pagination [collectionSize]="collectionSize()" [(page)]="page" [pageSize]="pageSize()"
 			(pageChange)="recarregarBeneficios()">
 		</ngb-pagination>
 
-		<select class="form-select" style="width: auto" [(ngModel)]="pageSize"
-			(ngModelChange)="recarregarBeneficios()">
+		<select class="form-select" style="width: auto" [(ngModel)]="pageSize" (ngModelChange)="recarregarBeneficios()">
 			<option [ngValue]="5">5 items por página</option>
 			<option [ngValue]="10">10 items por página</option>
 			<option [ngValue]="25">25 items por página</option>

@@ -1,7 +1,7 @@
 import { Component, EventEmitter, inject, Output, signal, TemplateRef, ViewChild, WritableSignal } from '@angular/core';
 
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap/modal';
-import { BeneficioDTO, GerenciamentoDeBenefciosService, ListarRequestParams, PageBeneficioDTO, TransferenciaRequest, TransferirRequestParams } from '../../../api';
+import { BeneficioDTO, GerenciamentoDeBenefciosService, TransferenciaRequest, TransferirRequestParams } from '../../../api';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 
@@ -14,15 +14,15 @@ import { CommonModule } from '@angular/common';
 export class TransferirModal {
 
   private modalService = inject(NgbModal);
-	closeResult: WritableSignal<string> = signal('');
+  closeResult: WritableSignal<string> = signal('');
   @ViewChild('content') contentTemplate!: TemplateRef<any>;
 
   @Output() transferido = new EventEmitter<TransferirRequestParams>();
 
-  transferenciaRequest : TransferenciaRequest = { contaOrigemId: 0, contaDestinoId: 0, valor: 0.00 };
+  transferenciaRequest: TransferenciaRequest = { contaOrigemId: 0, contaDestinoId: 0, valor: 0.00 };
 
   beneficiosDestino?: Array<BeneficioDTO> = [];
-  
+
   constructor(
     private beneficioApi: GerenciamentoDeBenefciosService
   ) {
@@ -41,7 +41,7 @@ export class TransferirModal {
         console.error('Erro ao listar benefícios para transferência:', error);
       }
     });
-    
+
   }
 
   transferir() {

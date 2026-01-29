@@ -15,9 +15,11 @@
             <div class="mb-3">
                 <label for="contaDestinoId">Conta Destino<span class="text-danger">*</span></label>
                 <div class="input-group">
-                    <select [(ngModel)]="transferenciaRequest.contaDestinoId" name="contaDestinoId" class="form-control">
+                    <select [(ngModel)]="transferenciaRequest.contaDestinoId" name="contaDestinoId"
+                        class="form-control">
                         <option value="0" selected disabled>Selecione uma Conta Destino</option>
-                        <option *ngFor="let beneficio of beneficiosDestino" [value]="beneficio.id">{{ beneficio.nome }}</option>
+                        <option *ngFor="let beneficio of beneficiosDestino" [value]="beneficio.id">{{ beneficio.nome }}
+                        </option>
                     </select>
                 </div>
             </div>

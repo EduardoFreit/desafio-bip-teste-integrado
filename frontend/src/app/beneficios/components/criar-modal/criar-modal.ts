@@ -13,7 +13,7 @@ import { FormsModule } from '@angular/forms';
 export class CriarModal {
 
   private modalService = inject(NgbModal);
-	closeResult: WritableSignal<string> = signal('');
+  closeResult: WritableSignal<string> = signal('');
   @ViewChild('content') contentTemplate!: TemplateRef<any>;
 
   @Output() cadastrado = new EventEmitter<BeneficioDTO>();
@@ -24,10 +24,10 @@ export class CriarModal {
     return { nome: '', descricao: '', valor: 0.00, ativo: true };
   }
 
-	open() {
+  open() {
     this.beneficioCadastro.set(this.setarBeneficioCriacao());
-		this.modalService.open(this.contentTemplate, { ariaLabelledBy: 'modal-basic-title' });
-	}
+    this.modalService.open(this.contentTemplate, { ariaLabelledBy: 'modal-basic-title' });
+  }
 
   cadastrar() {
     this.cadastrado.emit(this.beneficioCadastro());

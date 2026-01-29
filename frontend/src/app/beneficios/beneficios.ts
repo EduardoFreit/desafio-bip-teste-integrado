@@ -14,26 +14,28 @@ import { RemoverModal } from './components/remover-modal/remover-modal';
 
 @Component({
   selector: 'app-beneficios',
-  imports: [NgbPagination, CurrencyPipe, FormsModule, NgbdSortableHeader, CommonModule, NgbTooltip, CriarModal, EditarModal, TransferirModal, RemoverModal],
+  imports: [NgbPagination, CurrencyPipe, FormsModule, 
+    NgbdSortableHeader, CommonModule, NgbTooltip, CriarModal, 
+    EditarModal, TransferirModal, RemoverModal],
   templateUrl: './beneficios.html',
   styleUrl: './beneficios.css'
 })
 export class Beneficios {
 
   @ViewChildren(NgbdSortableHeader) headers!: QueryList<NgbdSortableHeader>;
-  
+
   @ViewChild(CriarModal) criarModal!: CriarModal;
   @ViewChild(EditarModal) editarModal!: EditarModal;
   @ViewChild(TransferirModal) transferirModal!: TransferirModal;
   @ViewChild(RemoverModal) removerModal!: RemoverModal;
 
   constructor(
-    private beneficioApi: GerenciamentoDeBenefciosService, 
+    private beneficioApi: GerenciamentoDeBenefciosService,
     private modalService: NgbModal,
     private toastr: ToastrService
   ) {
   }
-  
+
   // Filtros, tabela e paginação
   sizeOptions: number[] = [5, 10, 25];
   beneficios = signal<Array<BeneficioDTO>>([]);
@@ -41,7 +43,7 @@ export class Beneficios {
   page = signal<number>(1);
   pageSize = signal<number>(5);
   filtroNome = signal<string>('');
-  
+
   // Ordenação
   sortColumn = signal<string>('nome');
   sortDirection = signal<string>('asc')
@@ -51,7 +53,7 @@ export class Beneficios {
   }
 
   recarregarBeneficios() {
-    let filtroBeneficio : ListarRequestParams = {
+    let filtroBeneficio: ListarRequestParams = {
       page: this.page() - 1,
       size: this.pageSize(),
       sort: [`${this.sortColumn()},${this.sortDirection()}`],
@@ -86,7 +88,7 @@ export class Beneficios {
   }
 
   deletarBeneficio(id: number) {
-    let deletarRequestParams : DeletarRequestParams = { id };
+    let deletarRequestParams: DeletarRequestParams = { id };
     this.beneficioApi.deletar(deletarRequestParams).subscribe({
       next: () => {
         this.recarregarBeneficios();
@@ -103,8 +105,8 @@ export class Beneficios {
     this.criarModal.open();
   }
 
-  criarBeneficio (beneficio: BeneficioDTO) {
-    let criarRequestParams : CriarRequestParams = { beneficioDTO: beneficio };
+  criarBeneficio(beneficio: BeneficioDTO) {
+    let criarRequestParams: CriarRequestParams = { beneficioDTO: beneficio };
     this.beneficioApi.criar(criarRequestParams).subscribe({
       next: () => {
         this.recarregarBeneficios();
@@ -121,8 +123,8 @@ export class Beneficios {
     this.editarModal.open(beneficio);
   }
 
-  editarBeneficio (beneficio: BeneficioDTO) {
-    let criarRequestParams : AtualizarRequestParams = { beneficioDTO: beneficio, id: beneficio.id! };
+  editarBeneficio(beneficio: BeneficioDTO) {
+    let criarRequestParams: AtualizarRequestParams = { beneficioDTO: beneficio, id: beneficio.id! };
     this.beneficioApi.atualizar(criarRequestParams).subscribe({
       next: () => {
         this.recarregarBeneficios();
@@ -141,7 +143,7 @@ export class Beneficios {
     this.transferirModal.open(transferirRequestParams);
   }
 
-  transferirBeneficio (transferirRequestParams: TransferirRequestParams) {
+  transferirBeneficio(transferirRequestParams: TransferirRequestParams) {
     this.beneficioApi.transferir(transferirRequestParams).subscribe({
       next: () => {
         this.recarregarBeneficios();

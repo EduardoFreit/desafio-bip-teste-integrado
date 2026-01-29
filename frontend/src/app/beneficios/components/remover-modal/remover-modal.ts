@@ -12,17 +12,17 @@ import { BeneficioDTO } from '../../../api';
 export class RemoverModal {
 
   private modalService = inject(NgbModal);
-	closeResult: WritableSignal<string> = signal('');
+  closeResult: WritableSignal<string> = signal('');
   @ViewChild('content') contentTemplate!: TemplateRef<any>;
 
   @Output() deletado = new EventEmitter<number>();
 
-  beneficioDeletar : BeneficioDTO = { nome: '', descricao: '', valor: 0.00, ativo: true };
-	
+  beneficioDeletar: BeneficioDTO = { nome: '', descricao: '', valor: 0.00, ativo: true };
+
   open(beneficio: BeneficioDTO) {
     this.beneficioDeletar = beneficio;
-		this.modalService.open(this.contentTemplate, { ariaLabelledBy: 'modal-basic-title' });
-	}
+    this.modalService.open(this.contentTemplate, { ariaLabelledBy: 'modal-basic-title' });
+  }
 
   remover() {
     this.deletado.emit(this.beneficioDeletar.id!);

@@ -8,7 +8,7 @@ import { of } from 'rxjs';
 describe('Beneficios', () => {
   let component: Beneficios;
   let fixture: ComponentFixture<Beneficios>;
-  const mockBeneficios : PageBeneficioDTO = {
+  const mockBeneficios: PageBeneficioDTO = {
     content: [
       { id: 1, nome: 'Vale Refeição', descricao: 'Auxílio alimentação', valor: 500, ativo: true },
       { id: 2, nome: 'Auxílio Creche', descricao: 'Para filhos até 5 anos', valor: 300, ativo: false }
@@ -48,7 +48,7 @@ describe('Beneficios', () => {
       const rows = fixture.nativeElement.querySelectorAll('tbody tr');
       expect(rows.length).toBe(mockBeneficios.content?.length);
     });
-    
+
     it('deve exibir mensagem de lista vazia quando não houver benefícios', async () => {
       component.beneficios.set([]);
       component.collectionSize.set(0);
@@ -62,7 +62,7 @@ describe('Beneficios', () => {
 
     it('deve buscar benefícios filtrados do servidor', async () => {
       const beneficioService = TestBed.inject(GerenciamentoDeBenefciosService);
-      
+
       const mockFiltrado = {
         content: [mockBeneficios.content![0]], // Apenas 'Vale Refeição'
         totalElements: 1
@@ -78,7 +78,7 @@ describe('Beneficios', () => {
       await fixture.whenStable();
 
       const rows = fixture.nativeElement.querySelectorAll('tbody tr');
-      
+
       expect(spy).toHaveBeenCalled();
       expect(rows.length).toBe(1);
       expect(rows[0].textContent).toContain('Vale Refeição');

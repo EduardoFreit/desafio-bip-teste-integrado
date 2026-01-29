@@ -13,21 +13,21 @@ import { FormsModule } from '@angular/forms';
 export class EditarModal {
 
   private modalService = inject(NgbModal);
-	closeResult: WritableSignal<string> = signal('');
+  closeResult: WritableSignal<string> = signal('');
   @ViewChild('content') contentTemplate!: TemplateRef<any>;
 
   @Output() editado = new EventEmitter<BeneficioDTO>();
 
-  beneficioEdicao : WritableSignal<BeneficioDTO> = signal<BeneficioDTO>(this.setarBeneficioEdicao());
+  beneficioEdicao: WritableSignal<BeneficioDTO> = signal<BeneficioDTO>(this.setarBeneficioEdicao());
 
-  private setarBeneficioEdicao(beneficio ?: BeneficioDTO): BeneficioDTO {
+  private setarBeneficioEdicao(beneficio?: BeneficioDTO): BeneficioDTO {
     return beneficio ? { ...beneficio } : { nome: '', descricao: '', valor: 0.00, ativo: true };
   }
 
-	open(beneficio: BeneficioDTO) {
+  open(beneficio: BeneficioDTO) {
     this.beneficioEdicao.set(this.setarBeneficioEdicao(beneficio));
-		this.modalService.open(this.contentTemplate, { ariaLabelledBy: 'modal-basic-title' });
-	}
+    this.modalService.open(this.contentTemplate, { ariaLabelledBy: 'modal-basic-title' });
+  }
 
   editar() {
     this.editado.emit(this.beneficioEdicao());
