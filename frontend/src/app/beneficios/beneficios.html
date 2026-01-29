@@ -22,7 +22,7 @@
 				<th scope="col" sortable="nome" (sort)="onSort($event)">Nome</th>
 				<th scope="col" sortable="descricao" (sort)="onSort($event)">Descrição</th>
 				<th scope="col" sortable="valor" (sort)="onSort($event)">Valor</th>
-				<th scope="col" sortable="ativo" (sort)="onSort($event)">Ativo</th>
+				<th scope="col" sortable="ativo" (sort)="onSort($event)">Status</th>
 				<th scope="col">Ações</th>
 			</tr>
 		</thead>
@@ -33,7 +33,9 @@
 				<td>{{ beneficio.descricao }}</td>
 				<td>{{ beneficio.valor | currency:'BRL' }}</td>
 				<td>
-					<i [class]="beneficio.ativo ? 'bi bi-check-circle-fill text-success' : 'bi bi-x-circle-fill text-danger'"></i>
+					<span [class]="beneficio.ativo ? 'badge bg-success' : 'badge bg-danger'">
+						{{ beneficio.ativo ? 'Ativo' : 'Inativo' }}
+					</span>
 				</td>
 				<td>
 					<button class="btn btn-primary btn-sm me-2" (click)="abrirModalEditarBeneficio(beneficio)"

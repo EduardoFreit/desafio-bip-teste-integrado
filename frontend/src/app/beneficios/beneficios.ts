@@ -11,10 +11,11 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap/modal';
 import { TransferirModal } from './components/transferir-modal/transferir-modal';
 import { ToastrService } from 'ngx-toastr';
 import { RemoverModal } from './components/remover-modal/remover-modal';
+import { NgbAlert } from '@ng-bootstrap/ng-bootstrap/alert';
 
 @Component({
   selector: 'app-beneficios',
-  imports: [NgbPagination, CurrencyPipe, FormsModule, NgbdSortableHeader, CommonModule, NgbTooltip, CriarModal, EditarModal, TransferirModal, RemoverModal],
+  imports: [NgbPagination, CurrencyPipe, FormsModule, NgbdSortableHeader, CommonModule, NgbTooltip, CriarModal, EditarModal, TransferirModal, RemoverModal, NgbAlert],
   templateUrl: './beneficios.html',
   styleUrl: './beneficios.css'
 })
@@ -145,7 +146,6 @@ export class Beneficios {
     this.beneficioApi.transferir(transferirRequestParams).subscribe({
       next: () => {
         this.recarregarBeneficios();
-        this.modalService.dismissAll();
         this.toastr.success('Saldo transferido com sucesso!', 'Sucesso');
       },
       error: (error) => {

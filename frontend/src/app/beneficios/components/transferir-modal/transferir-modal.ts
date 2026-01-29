@@ -45,6 +45,7 @@ export class TransferirModal {
   }
 
   transferir() {
+    this.modalService.dismissAll();
     let transferirRequest: TransferirRequestParams = { transferenciaRequest: this.transferenciaRequest };
     this.transferido.emit(transferirRequest);
   }

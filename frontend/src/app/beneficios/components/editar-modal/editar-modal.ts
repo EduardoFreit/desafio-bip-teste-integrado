@@ -18,15 +18,19 @@ export class EditarModal {
 
   @Output() editado = new EventEmitter<BeneficioDTO>();
 
-  beneficioEdicao : BeneficioDTO = { nome: '', descricao: '', valor: 0.00, ativo: true };
+  beneficioEdicao : WritableSignal<BeneficioDTO> = signal<BeneficioDTO>(this.setarBeneficioEdicao());
+
+  private setarBeneficioEdicao(beneficio ?: BeneficioDTO): BeneficioDTO {
+    return beneficio ? { ...beneficio } : { nome: '', descricao: '', valor: 0.00, ativo: true };
+  }
 
 	open(beneficio: BeneficioDTO) {
-    this.beneficioEdicao = { ...beneficio };
+    this.beneficioEdicao.set(this.setarBeneficioEdicao(beneficio));
 		this.modalService.open(this.contentTemplate, { ariaLabelledBy: 'modal-basic-title' });
 	}
 
   editar() {
-    this.editado.emit(this.beneficioEdicao);
+    this.editado.emit(this.beneficioEdicao());
   }
 
 }
